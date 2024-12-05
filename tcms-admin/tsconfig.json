@@ -1,11 +1,22 @@
 {
-  "files": [],
-  "references": [
-    {
-      "path": "./tsconfig.app.json"
-    },
-    {
-      "path": "./tsconfig.node.json"
+  "compilerOptions": {
+    "target": "es5",
+    "lib": ["dom", "esnext"],
+    "allowJs": true,
+    "skipLibCheck": true,
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
+    "strict": true,
+    "forceConsistentCasingInFileNames": true,
+    "module": "esnext",
+    "moduleResolution": "node",
+    "resolveJsonModule": true,
+    "jsx": "react-jsx",
+    "baseUrl": "./src", // This tells the compiler that src is the base directory for module resolution
+    "paths": {
+      "*": ["node_modules/*", "src/types/*"] // Resolving types from src/types folder
     }
-  ]
+  },
+  "include": ["src/**/*"],
+  "exclude": ["node_modules", "build"]
 }
