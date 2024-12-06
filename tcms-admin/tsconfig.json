@@ -1,22 +1,19 @@
 {
   "compilerOptions": {
-    "target": "es5",
-    "lib": ["dom", "esnext"],
-    "allowJs": true,
-    "skipLibCheck": true,
-    "esModuleInterop": true,
-    "allowSyntheticDefaultImports": true,
-    "strict": true,
-    "forceConsistentCasingInFileNames": true,
-    "module": "esnext",
-    "moduleResolution": "node",
-    "resolveJsonModule": true,
-    "jsx": "react-jsx",
-    "baseUrl": "./src", // This tells the compiler that src is the base directory for module resolution
-    "paths": {
-      "*": ["node_modules/*", "src/types/*"] // Resolving types from src/types folder
-    }
+    "jsx": "react-jsx", // Enable React 17+ JSX transform
+    "module": "esnext", // Use modern module system
+    "target": "esnext", // Compile to the latest JavaScript version
+    "esModuleInterop": true, // Ensures compatibility with CommonJS modules
+    "moduleResolution": "node", // Use Node module resolution strategy
+    "skipLibCheck": true, // Skips type checking for declaration files for faster builds
+    "strict": true, // Enable strict mode for better type safety
+    "resolveJsonModule": true, // Allow importing JSON files
+    "lib": ["esnext", "dom"], // Include DOM types for React
+    "allowJs": true, // Allow JavaScript files if needed
+    "noEmit": true, // Don't emit output files during type-checking
+    "isolatedModules": true, // Enable isolated modules for better support with Vite
+    "incremental": true // Speed up builds with incremental compilation
   },
-  "include": ["src/**/*"],
-  "exclude": ["node_modules", "build"]
+  "include": ["src/**/*.tsx", "src/**/*.ts"], // Include TypeScript and TSX files in the src folder
+  "exclude": ["node_modules", "dist"] // Exclude node_modules and dist from being type-checked
 }

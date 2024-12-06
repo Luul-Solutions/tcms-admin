@@ -1,6 +1,7 @@
 {
   "private": true,
   "type": "module",
+  "name": "tcms-admin",
   "scripts": {
     "dev": "vite",
     "build": "vite build",
@@ -10,25 +11,31 @@
     "format": "prettier --write ./src"
   },
   "dependencies": {
+    "autoprefixer": "^10.4.20",
+    "lucide-react": "^0.468.0",
+    "postcss": "^8.4.49",
     "ra-data-json-server": "^5.4.0",
     "react": "^18.3.1",
     "react-admin": "^5.4.0",
-    "react-dom": "^18.3.1"
+    "react-dom": "^18.3.1",
+    "react-router-dom": "^6.28.0"
   },
   "devDependencies": {
     "@types/node": "^20.17.9",
-    "@types/react": "^18.3.3",
-    "@types/react-dom": "^18.3.0",
+    "@types/react": "^18.3.14",
+    "@types/react-dom": "^18.3.2",
+    "@types/react-router-dom": "^5.3.3",
     "@typescript-eslint/eslint-plugin": "^5.60.1",
     "@typescript-eslint/parser": "^5.60.1",
     "@vitejs/plugin-react": "^4.3.4",
+    "@vitejs/plugin-vue": "^5.2.1",
     "eslint": "^8.43.0",
     "eslint-config-prettier": "^8.8.0",
     "eslint-plugin-react": "^7.32.2",
     "eslint-plugin-react-hooks": "^4.6.0",
     "prettier": "^3.3.3",
-    "typescript": "^5.1.6",
+    "tailwindcss": "^3.4.16",
+    "typescript": "^5.7.2",
     "vite": "^5.4.11"
-  },
-  "name": "tcms-admin"
+  }
 }
