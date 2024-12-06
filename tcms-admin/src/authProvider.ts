@@ -12,7 +12,7 @@ export const authProvider: AuthProvider = {
 
     if (user) {
       // eslint-disable-next-line no-unused-vars, @typescript-eslint/no-unused-vars
-      let { password, ...userToPersist } = user;
+      const { password, ...userToPersist } = user;
       localStorage.setItem("user", JSON.stringify(userToPersist));
       return Promise.resolve();
     }
