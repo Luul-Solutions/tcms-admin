@@ -6,6 +6,7 @@ import Schools from "./components/Schools"; // School details component
 import Users from "./components/Users"; // User details component
 import Reports from "./components/Reports"; // Report details component
 import Notifications from "./components/Notifications"; // Notifications component
+import Settings from "./components/Settings";
 
 const App: React.FC = () => {
   return (
@@ -23,6 +24,7 @@ const App: React.FC = () => {
             <Route path="/user/:userName" element={<Users />} />
             <Route path="/report/:reportTitle" element={<Reports />} />
             <Route path="/notifications" element={<Notifications />} />
+            <Route path="/settings" element={<Settings />} />
           </Routes>
         </div>
       </div>
