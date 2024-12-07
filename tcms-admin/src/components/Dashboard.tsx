@@ -1,7 +1,8 @@
 import React from "react";
+import { Link } from "react-router-dom";
 
 const Dashboard: React.FC = () => {
-  // Data for Schools, Users, and Reports Panel (mock data)
+  // Mock data
   const schools = [
     {
       name: "FastTrack Academy",
@@ -41,116 +42,103 @@ const Dashboard: React.FC = () => {
   ];
 
   return (
-    <div className="p-8">
+    <div className="p-8 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 bg-gray-100 min-h-screen">
       {/* Schools Panel */}
-      <div className="mb-8">
-        <h3 className="text-2xl font-bold mb-4">Schools Panel</h3>
-        <div className="bg-white rounded-lg shadow-md p-4 mb-6">
-          <h4 className="text-xl font-semibold">List of Schools</h4>
-          <table className="w-full text-left mt-4">
-            <thead>
-              <tr>
-                <th className="border-b p-2">School Name</th>
-                <th className="border-b p-2">Status</th>
-                <th className="border-b p-2">Admin Contact</th>
-                <th className="border-b p-2">Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              {schools.map((school, index) => (
-                <tr key={index}>
-                  <td className="border-b p-2">{school.name}</td>
-                  <td className="border-b p-2">{school.status}</td>
-                  <td className="border-b p-2">{school.contact}</td>
-                  <td className="border-b p-2">
-                    <button className="bg-blue-500 text-white px-4 py-2 rounded">
-                      View Details
-                    </button>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+      <div className="bg-gradient-to-br from-blue-50 to-blue-100 rounded-3xl shadow-md p-6">
+        <h3 className="text-2xl font-bold text-gray-800 mb-4">Schools Panel</h3>
+        <div className="space-y-4">
+          {schools.map((school, index) => (
+            <div
+              key={index}
+              className="bg-white p-4 rounded-xl shadow-lg hover:shadow-2xl transition-shadow"
+            >
+              <h4 className="text-xl font-semibold">{school.name}</h4>
+              <p className="text-gray-600">Status: {school.status}</p>
+              <p className="text-gray-600">Admin: {school.admin}</p>
+              <p className="text-gray-600">Contact: {school.contact}</p>
+              <Link
+                to={`/school/${school.name}`}
+                className="mt-4 inline-block bg-blue-600 text-white py-2 px-4 rounded-full hover:bg-blue-700"
+              >
+                View Details
+              </Link>
+            </div>
+          ))}
         </div>
       </div>
 
       {/* User Management Panel */}
-      <div className="mb-8">
-        <h3 className="text-2xl font-bold mb-4">User Management Panel</h3>
-        <div className="bg-white rounded-lg shadow-md p-4">
-          <h4 className="text-xl font-semibold">Admins</h4>
-          <table className="w-full text-left mt-4">
-            <thead>
-              <tr>
-                <th className="border-b p-2">Name</th>
-                <th className="border-b p-2">Role</th>
-                <th className="border-b p-2">Status</th>
-                <th className="border-b p-2">Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              {users.map((user, index) => (
-                <tr key={index}>
-                  <td className="border-b p-2">{user.name}</td>
-                  <td className="border-b p-2">{user.role}</td>
-                  <td className="border-b p-2">{user.status}</td>
-                  <td className="border-b p-2">
-                    <button className="bg-green-500 text-white px-4 py-2 rounded mr-2">
-                      Edit
-                    </button>
-                    <button className="bg-red-500 text-white px-4 py-2 rounded">
-                      Deactivate
-                    </button>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+      <div className="bg-gradient-to-br from-green-50 to-green-100 rounded-3xl shadow-md p-6">
+        <h3 className="text-2xl font-bold text-gray-800 mb-4">
+          User Management Panel
+        </h3>
+        <div className="space-y-4">
+          {users.map((user, index) => (
+            <div
+              key={index}
+              className="bg-white p-4 rounded-xl shadow-lg hover:shadow-2xl transition-shadow"
+            >
+              <h4 className="text-xl font-semibold">{user.name}</h4>
+              <p className="text-gray-600">Role: {user.role}</p>
+              <p className="text-gray-600">Status: {user.status}</p>
+              <div className="mt-4 flex gap-2">
+                <Link
+                  to={`/user/${user.name}`}
+                  className="bg-blue-600 text-white py-2 px-4 rounded-full hover:bg-blue-700"
+                >
+                  Edit
+                </Link>
+                <button className="bg-red-600 text-white py-2 px-4 rounded-full hover:bg-red-700">
+                  Deactivate
+                </button>
+              </div>
+            </div>
+          ))}
         </div>
       </div>
 
       {/* Reports Panel */}
-      <div className="mb-8">
-        <h3 className="text-2xl font-bold mb-4">Reports Panel</h3>
-        <div className="bg-white rounded-lg shadow-md p-4">
-          <h4 className="text-xl font-semibold">Generate Reports</h4>
-          <ul className="mt-4">
-            {reports.map((report, index) => (
-              <li
-                key={index}
-                className="flex justify-between items-center py-2 border-b"
+      <div className="bg-gradient-to-br from-purple-50 to-purple-100 rounded-3xl shadow-md p-6">
+        <h3 className="text-2xl font-bold text-gray-800 mb-4">Reports Panel</h3>
+        <div className="space-y-4">
+          {reports.map((report, index) => (
+            <div
+              key={index}
+              className="bg-white p-4 rounded-xl shadow-lg hover:shadow-2xl transition-shadow"
+            >
+              <h4 className="text-xl font-semibold">{report.title}</h4>
+              <p className="text-gray-600">Date: {report.date}</p>
+              <p className="text-gray-600">Filters: {report.filters}</p>
+              <Link
+                to={`/report/${report.title}`}
+                className="mt-4 inline-block bg-blue-600 text-white py-2 px-4 rounded-full hover:bg-blue-700"
               >
-                <span>{report.title}</span>
-                <span className="text-gray-500">{report.date}</span>
-                <button className="bg-blue-500 text-white px-4 py-1 rounded">
-                  Export
-                </button>
-              </li>
-            ))}
-          </ul>
+                Export
+              </Link>
+            </div>
+          ))}
         </div>
       </div>
 
       {/* Notifications Panel */}
-      <div className="mb-8">
-        <h3 className="text-2xl font-bold mb-4">Notifications Panel</h3>
-        <div className="bg-white rounded-lg shadow-md p-4">
-          <h4 className="text-xl font-semibold">Manage Notifications</h4>
-          <ul className="mt-4">
-            {notifications.map((notification, index) => (
-              <li
-                key={index}
-                className="flex justify-between items-center py-2 border-b"
-              >
-                <span>{notification.message}</span>
-                <span className="text-gray-500">{notification.date}</span>
-              </li>
-            ))}
-          </ul>
-          <button className="bg-green-500 text-white px-4 py-2 mt-4 rounded">
-            Create Broadcast
-          </button>
+      <div className="bg-gradient-to-br from-yellow-50 to-yellow-100 rounded-3xl shadow-md p-6 col-span-full">
+        <h3 className="text-2xl font-bold text-gray-800 mb-4">
+          Notifications Panel
+        </h3>
+        <div className="space-y-4">
+          {notifications.map((notification, index) => (
+            <div
+              key={index}
+              className="bg-white p-4 rounded-xl shadow-lg hover:shadow-2xl transition-shadow"
+            >
+              <p className="text-gray-800">{notification.message}</p>
+              <p className="text-gray-500">{notification.date}</p>
+            </div>
+          ))}
         </div>
+        <button className="mt-4 bg-green-600 text-white py-2 px-4 rounded-full hover:bg-green-700">
+          Create Broadcast
+        </button>
       </div>
     </div>
   );
