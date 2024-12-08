@@ -1,20 +1,11 @@
 import React from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-<<<<<<< HEAD
-import Sidebar from "./components/Sidebar"; // Import the Sidebar component
-import Dashboard from "./components/Dashboard"; // Dashboard component
-import Schools from "./components/Schools"; // School details component
-import Users from "./components/Users"; // User details component
-import Reports from "./components/Reports"; // Report details component
-import Notifications from "./components/Notifications"; // Notifications component
-=======
 import Sidebar from "./components/Sidebar";
 import Dashboard from "./components/Dashboard";
 import Schools from "./components/Schools";
 import Users from "./components/Users";
 import Reports from "./components/Reports";
 import Notifications from "./components/Notifications";
->>>>>>> 4e17393 ( some changes to dashboard)
 import Settings from "./components/Settings";
 
 const App: React.FC = () => {

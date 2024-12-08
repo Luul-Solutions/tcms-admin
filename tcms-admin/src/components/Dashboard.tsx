@@ -9,164 +9,110 @@ const Dashboard: React.FC = () => {
     { title: "Notifications", info: "5 New Alerts" },
   ];
 
-  // State to track visibility of each panel
-  const [showSchools, setShowSchools] = useState(false);
-  const [showUsers, setShowUsers] = useState(false);
-  const [showReports, setShowReports] = useState(false);
+  const [searchTerm, setSearchTerm] = useState("");
+
+  const recentActivities = [
+    { action: "Added New User", timestamp: "2023-12-01 10:15" },
+    { action: "Generated Report", timestamp: "2023-11-30 16:45" },
+    { action: "Updated Content", timestamp: "2023-11-28 14:30" },
+    { action: "System Restart", timestamp: "2023-11-25 09:00" },
+  ];
 
   return (
-<<<<<<< HEAD
-    <div className="p-8 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 bg-gray-100 min-h-screen">
-      {/* Schools Panel */}
-      <div className="bg-gradient-to-br from-blue-50 to-blue-100 rounded-3xl shadow-md p-6">
-        <h3 className="text-2xl font-bold text-gray-800 mb-4">Schools Panel</h3>
-        <button
-          onClick={() => setShowSchools(!showSchools)}
-          className="bg-blue-600 text-white py-2 px-4 rounded-full hover:bg-blue-700"
-        >
-          {showSchools ? "Hide Details" : "View Details"}
-        </button>
-        {showSchools && (
-          <div className="space-y-4 mt-4">
-            {schools.map((school, index) => (
-              <div
-                key={index}
-                className="bg-white p-4 rounded-xl shadow-lg hover:shadow-2xl transition-shadow"
-              >
-                <h4 className="text-xl font-semibold">{school.name}</h4>
-                <p className="text-gray-600">Status: {school.status}</p>
-                <p className="text-gray-600">Admin: {school.admin}</p>
-                <p className="text-gray-600">Contact: {school.contact}</p>
-                <Link
-                  to={`/school/${school.name}`}
-                  className="mt-4 inline-block bg-blue-600 text-white py-2 px-4 rounded-full hover:bg-blue-700"
-                >
-                  View Details
-                </Link>
-              </div>
-            ))}
-          </div>
-        )}
+    <div className="flex-1 p-6 space-y-6 bg-gray-50">
+      {/* Search Panel */}
+      <div className="p-4 bg-white rounded-lg shadow-lg">
+        <input
+          type="text"
+          placeholder="Search users, reports, metrics..."
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+          className="w-full p-3 rounded-lg bg-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
+        />
       </div>
 
-      {/* User Management Panel */}
-      <div className="bg-gradient-to-br from-green-50 to-green-100 rounded-3xl shadow-md p-6">
-        <h3 className="text-2xl font-bold text-gray-800 mb-4">
-          User Management Panel
-        </h3>
-        <button
-          onClick={() => setShowUsers(!showUsers)}
-          className="bg-blue-600 text-white py-2 px-4 rounded-full hover:bg-blue-700"
-        >
-          {showUsers ? "Hide Details" : "View Details"}
-        </button>
-        {showUsers && (
-          <div className="space-y-4 mt-4">
-            {users.map((user, index) => (
-              <div
-                key={index}
-                className="bg-white p-4 rounded-xl shadow-lg hover:shadow-2xl transition-shadow"
-              >
-                <h4 className="text-xl font-semibold">{user.name}</h4>
-                <p className="text-gray-600">Role: {user.role}</p>
-                <p className="text-gray-600">Status: {user.status}</p>
-                <div className="mt-4 flex gap-2">
-                  <Link
-                    to={`/user/${user.name}`}
-                    className="bg-blue-600 text-white py-2 px-4 rounded-full hover:bg-blue-700"
-                  >
-                    Edit
-                  </Link>
-                  <button className="bg-red-600 text-white py-2 px-4 rounded-full hover:bg-red-700">
-                    Deactivate
-                  </button>
-                </div>
-              </div>
-            ))}
-          </div>
-        )}
+      {/* Quick Access Shortcuts */}
+      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 mt-4">
+        {[
+          { title: "Add New User", action: "/add-user" },
+          { title: "Generate Report", action: "/generate-report" },
+          { title: "Update Content", action: "/update-content" },
+          { title: "View Analytics", action: "/analytics" },
+        ].map((shortcut, idx) => (
+          <Link
+            key={idx}
+            to={shortcut.action}
+            className="p-6 bg-gradient-to-r from-indigo-500 to-purple-500 text-white rounded-lg shadow-lg hover:shadow-2xl transform transition-all duration-300 ease-in-out text-center"
+          >
+            <h4 className="font-bold text-lg">{shortcut.title}</h4>
+          </Link>
+        ))}
       </div>
 
-      {/* Reports Panel */}
-      <div className="bg-gradient-to-br from-purple-50 to-purple-100 rounded-3xl shadow-md p-6">
-        <h3 className="text-2xl font-bold text-gray-800 mb-4">Reports Panel</h3>
-        <button
-          onClick={() => setShowReports(!showReports)}
-          className="bg-blue-600 text-white py-2 px-4 rounded-full hover:bg-blue-700"
-        >
-          {showReports ? "Hide Details" : "View Details"}
-        </button>
-        {showReports && (
-          <div className="space-y-4 mt-4">
-            {reports.map((report, index) => (
-              <div
-                key={index}
-                className="bg-white p-4 rounded-xl shadow-lg hover:shadow-2xl transition-shadow"
-              >
-                <h4 className="text-xl font-semibold">{report.title}</h4>
-                <p className="text-gray-600">Date: {report.date}</p>
-                <p className="text-gray-600">Filters: {report.filters}</p>
-                <Link
-                  to={`/report/${report.title}`}
-                  className="mt-4 inline-block bg-blue-600 text-white py-2 px-4 rounded-full hover:bg-blue-700"
-                >
-                  Export
-                </Link>
-              </div>
-            ))}
-          </div>
-        )}
-      </div>
-
-      {/* Notifications Panel */}
-      <div className="bg-gradient-to-br from-yellow-50 to-yellow-100 rounded-3xl shadow-md p-6 col-span-full">
-        <h3 className="text-2xl font-bold text-gray-800 mb-4">
-          Notifications Panel
-        </h3>
-        <div className="space-y-4">
-          {notifications.map((notification, index) => (
-            <div
-              key={index}
-              className="bg-white p-4 rounded-xl shadow-lg hover:shadow-2xl transition-shadow"
-            >
-              <p className="text-gray-800">{notification.message}</p>
-              <p className="text-gray-500">{notification.date}</p>
-            </div>
-          ))}
-        </div>
-        <button className="mt-4 bg-green-600 text-white py-2 px-4 rounded-full hover:bg-green-700">
-          Create Broadcast
-        </button>
-=======
-    <div className="flex-1 p-6 space-y-6 bg-gray-100">
-      {/* Dashboard Cards at the Top */}
-      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+      {/* Dashboard Cards */}
+      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 mt-6">
         {cards.map((card, idx) => (
           <div
             key={idx}
-            className="p-4 bg-white rounded-lg shadow-lg hover:shadow-xl transform transition-all duration-300 ease-in-out hover:scale-105 group"
+            className="relative p-6 bg-white rounded-lg shadow-lg overflow-hidden hover:shadow-2xl transform transition-all duration-300 ease-in-out group"
           >
-            <div className="group-hover:scale-110 group-hover:translate-y-1 transition-all duration-300 ease-in-out">
-              <h4 className="font-semibold text-gray-800 text-lg">
-                {card.title}
-              </h4>
-              <p className="text-gray-600 mt-2">{card.info}</p>
+            <div className="group-hover:translate-y-1 group-hover:scale-105 transition-all">
+              <h4 className="font-bold text-gray-800 text-xl">{card.title}</h4>
+              <p className="text-gray-600 mt-2 text-sm">{card.info}</p>
             </div>
 
-            <div className="mt-4 flex justify-end">
+            {/* Interactive Hover Effect */}
+            <div className="absolute inset-0 rounded-lg bg-gradient-to-r from-blue-50 to-blue-200 opacity-0 group-hover:opacity-40 transition-all duration-500"></div>
+
+            <div className="absolute inset-0 flex items-end justify-end p-2">
               <Link
                 to={`/${card.title.toLowerCase()}`}
-                className="inline-block bg-blue-600 text-white rounded-full py-1 px-2 text-xs hover:bg-blue-700 transition-all duration-200"
+                className="inline-block bg-blue-600 text-white rounded-full py-1 px-2 text-xs hover:bg-blue-700 transform transition-all duration-200"
               >
                 View Details
               </Link>
             </div>
-
-            {/* Double Hover Effect */}
-            <div className="absolute inset-0 rounded-lg bg-gradient-to-r from-blue-50 to-blue-200 opacity-0 group-hover:opacity-30 transition-all duration-500"></div>
           </div>
         ))}
->>>>>>> 4e17393 ( some changes to dashboard)
+      </div>
+
+      {/* Recent Activity Logs */}
+      <div className="p-6 bg-white rounded-lg shadow-lg">
+        <h4 className="font-bold text-gray-800 text-lg mb-4">
+          Recent Activities
+        </h4>
+        {recentActivities.map((activity, idx) => (
+          <div
+            key={idx}
+            className="flex justify-between py-3 border-t items-center hover:bg-gray-100 rounded-lg transition-all duration-300"
+          >
+            <span className="text-gray-700">{activity.action}</span>
+            <span className="text-gray-500 text-sm">{activity.timestamp}</span>
+          </div>
+        ))}
+      </div>
+
+      {/* Calendar Integration Placeholder */}
+      <div className="p-6 bg-white rounded-lg shadow-lg mt-6">
+        <h4 className="font-bold text-gray-800 text-lg mb-4">
+          Upcoming Events
+        </h4>
+        <div className="space-y-2">
+          {[
+            { title: "Team Meeting", date: "Dec 5, 2023" },
+            { title: "Report Deadline", date: "Dec 10, 2023" },
+            { title: "Content Review", date: "Dec 15, 2023" },
+          ].map((event, idx) => (
+            <div
+              key={idx}
+              className="p-4 bg-gray-200 rounded-lg shadow hover:bg-gray-300 transition-all duration-300"
+            >
+              <p>
+                <strong>{event.title}</strong> - <span>{event.date}</span>
+              </p>
+            </div>
+          ))}
+        </div>
       </div>
     </div>
   );
