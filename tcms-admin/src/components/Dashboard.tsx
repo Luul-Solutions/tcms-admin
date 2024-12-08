@@ -2,43 +2,11 @@ import React, { useState } from "react";
 import { Link } from "react-router-dom";
 
 const Dashboard: React.FC = () => {
-  // Mock data
-  const schools = [
-    {
-      name: "FastTrack Academy",
-      status: "Active",
-      admin: "John Doe",
-      contact: "07487872018",
-    },
-    {
-      name: "TechSchool",
-      status: "Inactive",
-      admin: "Jane Smith",
-      contact: "07398742106",
-    },
-  ];
-
-  const users = [
-    { name: "Admin User 1", role: "Admin", status: "Active" },
-    { name: "Admin User 2", role: "Admin", status: "Deactivated" },
-  ];
-
-  const reports = [
-    {
-      title: "School Performance Report",
-      date: "2024-12-01",
-      filters: "All Schools",
-    },
-    {
-      title: "Student Attendance Report",
-      date: "2024-11-15",
-      filters: "By School",
-    },
-  ];
-
-  const notifications = [
-    { message: "New classes available for enrollment", date: "2024-12-02" },
-    { message: "School holiday announcement", date: "2024-11-28" },
+  const cards = [
+    { title: "Schools", info: "5 Active Schools" },
+    { title: "Users", info: "20 Active Users" },
+    { title: "Reports", info: "10 Pending Reports" },
+    { title: "Notifications", info: "5 New Alerts" },
   ];
 
   // State to track visibility of each panel
@@ -47,6 +15,7 @@ const Dashboard: React.FC = () => {
   const [showReports, setShowReports] = useState(false);
 
   return (
+<<<<<<< HEAD
     <div className="p-8 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 bg-gray-100 min-h-screen">
       {/* Schools Panel */}
       <div className="bg-gradient-to-br from-blue-50 to-blue-100 rounded-3xl shadow-md p-6">
@@ -168,6 +137,36 @@ const Dashboard: React.FC = () => {
         <button className="mt-4 bg-green-600 text-white py-2 px-4 rounded-full hover:bg-green-700">
           Create Broadcast
         </button>
+=======
+    <div className="flex-1 p-6 space-y-6 bg-gray-100">
+      {/* Dashboard Cards at the Top */}
+      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+        {cards.map((card, idx) => (
+          <div
+            key={idx}
+            className="p-4 bg-white rounded-lg shadow-lg hover:shadow-xl transform transition-all duration-300 ease-in-out hover:scale-105 group"
+          >
+            <div className="group-hover:scale-110 group-hover:translate-y-1 transition-all duration-300 ease-in-out">
+              <h4 className="font-semibold text-gray-800 text-lg">
+                {card.title}
+              </h4>
+              <p className="text-gray-600 mt-2">{card.info}</p>
+            </div>
+
+            <div className="mt-4 flex justify-end">
+              <Link
+                to={`/${card.title.toLowerCase()}`}
+                className="inline-block bg-blue-600 text-white rounded-full py-1 px-2 text-xs hover:bg-blue-700 transition-all duration-200"
+              >
+                View Details
+              </Link>
+            </div>
+
+            {/* Double Hover Effect */}
+            <div className="absolute inset-0 rounded-lg bg-gradient-to-r from-blue-50 to-blue-200 opacity-0 group-hover:opacity-30 transition-all duration-500"></div>
+          </div>
+        ))}
+>>>>>>> 4e17393 ( some changes to dashboard)
       </div>
     </div>
   );
