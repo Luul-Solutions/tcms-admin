@@ -1,43 +1,55 @@
 import React, { useState } from "react";
-import { Link } from "react-router-dom";
 import { CheckCircle, Ban, Trash2, Info, Settings } from "lucide-react";
+import { Link } from "react-router-dom";
+import { motion, AnimatePresence } from "framer-motion";
 
 const Schools: React.FC = () => {
   const [schools, setSchools] = useState([
-    {
-      name: "FastTrack Academy",
-      status: "Active",
-      adminContact: "admin@fasttrack.com",
-      address: "123 Main St",
-      phone: "555-1234",
-    },
-    {
-      name: "TechSchool",
-      status: "Inactive",
-      adminContact: "contact@techschool.com",
-      address: "456 Elm St",
-      phone: "555-5678",
-    },
+    { name: "FastTrack Academy", status: "Active", adminContact: "admin@fasttrack.com", address: "123 Main St", phone: "555-1234" },
+    { name: "TechSchool", status: "Inactive", adminContact: "contact@techschool.com", address: "456 Elm St", phone: "555-5678" },
+    { name: "Greenwood School", status: "Active", adminContact: "info@greenwood.com", address: "789 Oak St", phone: "555-9876" },
   ]);
+  const [filteredSchools, setFilteredSchools] = useState(schools);
   const [newSchool, setNewSchool] = useState({
     name: "",
     address: "",
     adminContact: "",
     phone: "",
   });
-  const [isFormVisible, setIsFormVisible] = useState(false); // State to control form visibility
-  const [selectedSchool, setSelectedSchool] = useState<any | null>(null); // To control the modal visibility and selected school
+  const [isFormVisible, setIsFormVisible] = useState(false);
+  const [selectedSchools, setSelectedSchools] = useState<string[]>([]);
 
-  const addSchool = (e: React.FormEvent) => {
+  const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const term = e.target.value.toLowerCase();
+    const filtered = schools.filter(
+      (school) =>
+        school.name.toLowerCase().includes(term) ||
+        school.adminContact.toLowerCase().includes(term)
+    );
+    setFilteredSchools(filtered);
+  };
+
+  const handleAddSchool = () => setIsFormVisible(true);
+  const handleCloseModal = () => setIsFormVisible(false);
+
+  const handleFormChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setNewSchool((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (
-      newSchool.name.trim() !== "" &&
-      newSchool.address.trim() !== "" &&
-      newSchool.adminContact.trim() !== ""
-    ) {
-      setSchools([...schools, { ...newSchool, status: "Inactive" }]);
-      setNewSchool({ name: "", address: "", adminContact: "", phone: "" }); // Reset form
-      setIsFormVisible(false); // Hide form after submission
+    setSchools((prevSchools) => [...prevSchools, newSchool]);
+    setFilteredSchools((prevSchools) => [...prevSchools, newSchool]);
+    setNewSchool({ name: "", address: "", adminContact: "", phone: "" });
+    handleCloseModal();
+  };
+
+  const handleCheckboxChange = (schoolId: string) => {
+    if (selectedSchools.includes(schoolId)) {
+      setSelectedSchools(selectedSchools.filter((id) => id !== schoolId));
+    } else {
+      setSelectedSchools([...selectedSchools, schoolId]);
     }
   };
 
@@ -45,260 +57,200 @@ const Schools: React.FC = () => {
     setSchools((prevSchools) =>
       prevSchools.map((school, i) =>
         i === index
-          ? {
-              ...school,
-              status: school.status === "Active" ? "Inactive" : "Active",
-            }
-          : school,
-      ),
+          ? { ...school, status: school.status === "Active" ? "Inactive" : "Active" }
+          : school
+      )
+    );
+    setFilteredSchools((prevSchools) =>
+      prevSchools.map((school, i) =>
+        i === index
+          ? { ...school, status: school.status === "Active" ? "Inactive" : "Active" }
+          : school
+      )
     );
   };
 
-  const deleteSchool = (index: number) => {
-    setSchools((prevSchools) => prevSchools.filter((_, i) => i !== index));
-  };
-
-  const viewDetails = (school: any) => {
-    setSelectedSchool(school);
-  };
-
-  const closeDetails = () => {
-    setSelectedSchool(null);
-  };
-
   return (
-    <div className="flex-1 p-6 space-y-6 bg-gradient-to-br from-gray-50 to-blue-50">
-      {/* Add School Section */}
-      <div className="p-6 bg-gradient-to-r from-indigo-500 to-purple-500 text-white rounded-lg shadow-lg">
-        <h4 className="font-bold text-xl mb-4">Add New School</h4>
-        <button
-          onClick={() => setIsFormVisible(!isFormVisible)}
-          className="bg-white text-indigo-600 font-semibold px-6 py-3 rounded-lg shadow hover:bg-gray-100 transition"
-        >
-          {isFormVisible ? "Cancel" : "Add School"}
-        </button>
+    <div className="p-6 bg-gray-50 min-h-screen">
+      {/* Quick Stats Section */}
+      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 mb-6">
+        {[
+          { title: "Total Schools", info: schools.length },
+          { title: "Active Schools", info: schools.filter((school) => school.status === "Active").length },
+          { title: "Inactive Schools", info: schools.filter((school) => school.status === "Inactive").length },
+          { title: "Schools Managed", info: 5 },
+        ].map((stat, index) => (
+          <motion.div
+            key={index}
+            className="p-4 bg-white rounded-lg shadow-lg text-center"
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+          >
+            <h4 className="text-gray-700 font-bold">{stat.title}</h4>
+            <p className="text-gray-600 mt-2 text-xl">{stat.info}</p>
+          </motion.div>
+        ))}
+      </div>
 
-        {/* Form Card */}
-        {isFormVisible && (
-          <div className="mt-6 p-6 bg-white rounded-lg shadow-lg">
-            <h4 className="font-bold text-xl mb-4">School Information</h4>
-            <form onSubmit={addSchool} className="space-y-4">
-              <div>
-                <label className="block font-semibold text-gray-700">
-                  School Name
-                </label>
-                <input
-                  type="text"
-                  value={newSchool.name}
-                  onChange={(e) =>
-                    setNewSchool({ ...newSchool, name: e.target.value })
-                  }
-                  className="w-full p-3 rounded-lg bg-gray-100 text-gray-800 focus:outline-none focus:ring-2 focus:ring-indigo-500"
-                  required
-                />
-              </div>
-              <div>
-                <label className="block font-semibold text-gray-700">
-                  Address
-                </label>
-                <input
-                  type="text"
-                  value={newSchool.address}
-                  onChange={(e) =>
-                    setNewSchool({ ...newSchool, address: e.target.value })
-                  }
-                  className="w-full p-3 rounded-lg bg-gray-100 text-gray-800 focus:outline-none focus:ring-2 focus:ring-indigo-500"
-                  required
-                />
-              </div>
-              <div>
-                <label className="block font-semibold text-gray-700">
-                  Admin Contact
-                </label>
-                <input
-                  type="email"
-                  value={newSchool.adminContact}
-                  onChange={(e) =>
-                    setNewSchool({ ...newSchool, adminContact: e.target.value })
-                  }
-                  className="w-full p-3 rounded-lg bg-gray-100 text-gray-800 focus:outline-none focus:ring-2 focus:ring-indigo-500"
-                  required
-                />
-              </div>
-              <div>
-                <label className="block font-semibold text-gray-700">
-                  Phone (optional)
-                </label>
-                <input
-                  type="text"
-                  value={newSchool.phone}
-                  onChange={(e) =>
-                    setNewSchool({ ...newSchool, phone: e.target.value })
-                  }
-                  className="w-full p-3 rounded-lg bg-gray-100 text-gray-800 focus:outline-none focus:ring-2 focus:ring-indigo-500"
-                />
-              </div>
-              <button
-                type="submit"
-                className="w-full bg-indigo-600 hover:bg-indigo-700 text-white py-3 rounded-lg"
+      {/* Search Bar */}
+      <motion.input
+        type="text"
+        placeholder="Search schools by name or admin contact"
+        onChange={handleSearch}
+        className="w-full p-3 mb-4 rounded-lg bg-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500"
+        initial={{ opacity: 0, y: -20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5 }}
+      />
+
+      {/* Add New School Button */}
+      <motion.button
+        onClick={handleAddSchool}
+        className="mb-4 bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 transition"
+        whileHover={{ scale: 1.05 }}
+        whileTap={{ scale: 0.95 }}
+      >
+        ➕ Add New School
+      </motion.button>
+
+      {/* School List */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {filteredSchools.map((school, index) => (
+          <motion.div
+            key={index}
+            className="relative p-6 bg-white rounded-lg shadow-lg hover:shadow-2xl transition-all"
+            whileHover={{ scale: 1.02 }}
+            layout
+          >
+            <input
+              type="checkbox"
+              className="absolute top-4 right-4"
+              onChange={() => handleCheckboxChange(school.name)}
+            />
+            <h2 className="font-bold text-gray-900 text-xl">{school.name}</h2>
+            <p>Admin Contact: {school.adminContact}</p>
+            <p>Address: {school.address}</p>
+            <p>
+              Status:{" "}
+              <span
+                className={`${school.status === "Active" ? "text-green-500" : "text-red-500"}`}
               >
-                Add School
-              </button>
-            </form>
-          </div>
-        )}
+                {school.status}
+              </span>
+            </p>
+
+            <div className="mt-4 flex justify-between items-center">
+              <motion.button
+                onClick={() => toggleSchoolStatus(index)}
+                className={`px-4 py-2 rounded-lg text-white ${
+                  school.status === "Active" ? "bg-red-500 hover:bg-red-600" : "bg-green-500 hover:bg-green-600"
+                }`}
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+              >
+                {school.status === "Active" ? <Ban /> : <CheckCircle />}
+                {school.status === "Active" ? "Deactivate" : "Activate"}
+              </motion.button>
+
+              <Link
+                to={`/school/edit/${school.name}`}
+                className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition"
+              >
+                <Settings />
+              </Link>
+            </div>
+          </motion.div>
+        ))}
       </div>
 
-      {/* Schools List - Table Format */}
-      <div className="p-6 bg-white rounded-lg shadow-lg">
-        <h4 className="font-bold text-xl text-gray-800 mb-6">
-          List of Schools
-        </h4>
-        <table className="w-full table-auto border-collapse">
-          <thead>
-            <tr className="bg-gray-100 text-gray-700">
-              <th className="py-3 px-6 border-b">Name</th>
-              <th className="py-3 px-6 border-b">Status</th>
-              <th className="py-3 px-6 border-b">Admin Contact</th>
-              <th className="py-3 px-6 border-b">Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            {schools.map((school, index) => (
-              <tr key={index} className="border-b hover:bg-gray-100">
-                <td className="py-4 px-6">{school.name}</td>
-                <td className="py-4 px-6">
-                  <span
-                    className={`font-semibold ${
-                      school.status === "Active"
-                        ? "text-green-600"
-                        : "text-red-600"
-                    }`}
-                  >
-                    {school.status}
-                  </span>
-                </td>
-                <td className="py-4 px-6">{school.adminContact}</td>
-                <td className="py-4 px-6">
-                  <div className="flex space-x-3 items-center justify-center">
-                    {/* Toggle Status */}
-                    <button
-                      onClick={() => toggleSchoolStatus(index)}
-                      className={`flex items-center space-x-2 p-2 rounded-lg ${
-                        school.status === "Active"
-                          ? "bg-red-500 hover:bg-red-600"
-                          : "bg-green-500 hover:bg-green-600"
-                      } text-white shadow transition`}
-                    >
-                      {school.status === "Active" ? <Ban /> : <CheckCircle />}
-                      <span>
-                        {school.status === "Active" ? "Deactivate" : "Activate"}
-                      </span>
-                    </button>
-
-                    {/* Delete */}
-                    <button
-                      onClick={() => deleteSchool(index)}
-                      className="flex items-center space-x-2 p-2 bg-gray-400 hover:bg-gray-500 text-white rounded-lg shadow transition"
-                    >
-                      <Trash2 />
-                    </button>
-
-                    {/* View Details */}
-                    <button
-                      onClick={() => viewDetails(school)}
-                      className="flex items-center space-x-2 p-2 bg-blue-500 hover:bg-blue-600 text-white rounded-lg shadow transition"
-                    >
-                      <Info />
-                    </button>
-
-                    {/* Edit */}
-                    <Link
-                      to={`/school/edit/${school.name}`}
-                      className="flex items-center space-x-2 p-2 bg-indigo-500 hover:bg-indigo-600 text-white rounded-lg shadow transition"
-                    >
-                      <Settings />
-                    </Link>
-                  </div>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
-
-      {/* School Details Modal */}
-      {selectedSchool && (
-        <div className="fixed inset-0 bg-gray-900 bg-opacity-50 flex justify-center items-center z-10">
-          <div className="bg-white p-6 rounded-lg shadow-lg w-96 space-y-4">
-            <h3 className="font-bold text-xl text-indigo-600">
-              {selectedSchool.name} Details
-            </h3>
-            <div className="space-y-2">
-              <p className="text-gray-700">
-                <strong>Address:</strong> {selectedSchool.address}
-              </p>
-              <p className="text-gray-700">
-                <strong>Phone:</strong> {selectedSchool.phone}
-              </p>
-              <p className="text-gray-700">
-                <strong>Admin Contact:</strong> {selectedSchool.adminContact}
-              </p>
-              <p className="text-gray-700">
-                <strong>Status:</strong>{" "}
-                <span
-                  className={`font-semibold ${
-                    selectedSchool.status === "Active"
-                      ? "text-green-600"
-                      : "text-red-600"
-                  }`}
-                >
-                  {selectedSchool.status}
-                </span>
-              </p>
-            </div>
-
-            <div className="grid grid-cols-2 gap-4">
-              <div className="p-4 bg-blue-500 text-white rounded-lg shadow-lg text-center">
-                <h5 className="font-bold text-lg">Students</h5>
-                <p className="text-2xl font-semibold">150</p>
-              </div>
-              <div className="p-4 bg-green-500 text-white rounded-lg shadow-lg text-center">
-                <h5 className="font-bold text-lg">Teachers</h5>
-                <p className="text-2xl font-semibold">20</p>
-              </div>
-            </div>
-
-            <button
-              onClick={closeDetails}
-              className="w-full bg-red-500 hover:bg-red-600 text-white py-2 rounded-lg"
+      {/* Modal Form for Adding New School */}
+      <AnimatePresence>
+        {isFormVisible && (
+          <motion.div
+            className="fixed inset-0 bg-gray-500 bg-opacity-50 flex justify-center items-center z-50"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+          >
+            <motion.div
+              className="bg-white p-8 rounded-lg shadow-lg w-1/3"
+              initial={{ scale: 0.8 }}
+              animate={{ scale: 1 }}
+              exit={{ scale: 0.8 }}
             >
-              Close
-            </button>
-          </div>
-        </div>
-      )}
-
-      {/* Metrics Section */}
-      <div className="p-6 bg-gray-50 rounded-lg shadow-lg">
-        <h4 className="font-bold text-xl text-gray-800 mb-6">
-          Metrics Overview
-        </h4>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          <div className="p-6 bg-blue-500 text-white rounded-lg shadow-lg">
-            <h5 className="font-bold text-lg">Students</h5>
-            <p className="text-2xl font-semibold">150</p>
-          </div>
-          <div className="p-6 bg-green-500 text-white rounded-lg shadow-lg">
-            <h5 className="font-bold text-lg">Teachers</h5>
-            <p className="text-2xl font-semibold">20</p>
-          </div>
-          <div className="p-6 bg-purple-500 text-white rounded-lg shadow-lg">
-            <h5 className="font-bold text-lg">Performance</h5>
-            <p className="text-2xl font-semibold">85%</p>
-          </div>
-        </div>
-      </div>
+              <h2 className="text-2xl font-bold mb-4">Add New School</h2>
+              <form onSubmit={handleSubmit}>
+                <div className="mb-4">
+                  <label htmlFor="name" className="block text-gray-700">School Name</label>
+                  <input
+                    type="text"
+                    id="name"
+                    name="name"
+                    value={newSchool.name}
+                    onChange={handleFormChange}
+                    className="w-full p-3 mt-2 rounded-lg bg-gray-200"
+                    required
+                  />
+                </div>
+                <div className="mb-4">
+                  <label htmlFor="address" className="block text-gray-700">Address</label>
+                  <input
+                    type="text"
+                    id="address"
+                    name="address"
+                    value={newSchool.address}
+                    onChange={handleFormChange}
+                    className="w-full p-3 mt-2 rounded-lg bg-gray-200"
+                    required
+                  />
+                </div>
+                <div className="mb-4">
+                  <label htmlFor="adminContact" className="block text-gray-700">Admin Contact</label>
+                  <input
+                    type="email"
+                    id="adminContact"
+                    name="adminContact"
+                    value={newSchool.adminContact}
+                    onChange={handleFormChange}
+                    className="w-full p-3 mt-2 rounded-lg bg-gray-200"
+                    required
+                  />
+                </div>
+                <div className="mb-4">
+                  <label htmlFor="phone" className="block text-gray-700">Phone</label>
+                  <input
+                    type="text"
+                    id="phone"
+                    name="phone"
+                    value={newSchool.phone}
+                    onChange={handleFormChange}
+                    className="w-full p-3 mt-2 rounded-lg bg-gray-200"
+                  />
+                </div>
+                <div className="flex justify-between">
+                  <motion.button
+                    type="submit"
+                    className="px-6 py-3 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition"
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
+                  >
+                    Add School
+                  </motion.button>
+                  <motion.button
+                    type="button"
+                    onClick={handleCloseModal}
+                    className="px-6 py-3 bg-red-500 text-white rounded-lg hover:bg-red-600 transition"
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
+                  >
+                    Cancel
+                  </motion.button>
+                </div>
+              </form>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 };
