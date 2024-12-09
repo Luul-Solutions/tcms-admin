@@ -1,12 +1,19 @@
 import React from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+
 import Sidebar from "./components/Sidebar";
 import Dashboard from "./components/Dashboard";
 import Schools from "./components/Schools";
 import Users from "./components/Users";
 import Reports from "./components/Reports";
 import Notifications from "./components/Notifications";
-import Settings from "./components/Settings";
+import AdminSettings from "./components/Settings";
+import Profile from "./components/Settings/Profile";
+import Password from "./components/Settings/Password";
+import Team from "./components/Settings/Team";
+import Details from "./components/Settings/Details";
+import Appearance from "./components/Settings/Appearance";
+import Transactions from "./components/Transactions";
 
 const App: React.FC = () => {
   return (
@@ -23,7 +30,16 @@ const App: React.FC = () => {
             <Route path="/user/:userName" element={<Users />} />
             <Route path="/report/:reportTitle" element={<Reports />} />
             <Route path="/notifications" element={<Notifications />} />
-            <Route path="/settings" element={<Settings />} />
+            <Route path="/settings" element={<AdminSettings />} />
+
+            {/* Submenu Routes for Settings */}
+            <Route path="/settings/profile" element={<Profile />} />
+            <Route path="/settings/password" element={<Password />} />
+            <Route path="/settings/team" element={<Team />} />
+            <Route path="/settings/details" element={<Details />} />
+            <Route path="/settings/appearance" element={<Appearance />} />
+
+            <Route path="/transactions" element={<Transactions />} />
           </Routes>
         </div>
       </div>
