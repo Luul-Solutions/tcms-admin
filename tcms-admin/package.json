@@ -3,7 +3,7 @@
   "type": "module",
   "name": "tcms-admin",
   "scripts": {
-    "dev": "vite",
+    "dev": "vite --host localhost --port 5175",
     "build": "vite build",
     "serve": "vite preview",
     "type-check": "tsc --noEmit",
@@ -12,11 +12,13 @@
   },
   "dependencies": {
     "autoprefixer": "^10.4.20",
+    "chart.js": "^4.4.7",
     "lucide-react": "^0.468.0",
     "postcss": "^8.4.49",
     "ra-data-json-server": "^5.4.0",
     "react": "^18.3.1",
-    "react-admin": "^5.4.0",
+    "react-admin": "^5.4.1",
+    "react-chartjs-2": "^5.2.0",
     "react-dom": "^18.3.1",
     "react-router-dom": "^6.28.0"
   },
