@@ -1,9 +1,10 @@
 import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Card, CardContent, Typography, Button } from "@mui/material";
 
-const Dashboard: React.FC = () => {
+const Dashboard: React.FC<{ setAuth: any }> = ({ setAuth }) => {
   const [searchTerm, setSearchTerm] = useState("");
+  const navigate = useNavigate();
 
   const cards = [
     { title: "Schools", info: "5 Active Schools" },
@@ -47,6 +48,11 @@ const Dashboard: React.FC = () => {
     { action: "System Restart", timestamp: "25/11/2023 09:00" },
   ];
 
+  const handleLogout = () => {
+    setAuth(false); // Clear authentication state
+    navigate("/"); // Redirect to the login page
+  };
+
   return (
     <div className="flex bg-light-blue-50 h-full min-h-screen p-6">
       {/* Left Column */}
@@ -65,17 +71,22 @@ const Dashboard: React.FC = () => {
         {/* Cards Section */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-6 mb-6">
           {cards.map((card, idx) => (
-            <div
+            <Card
               key={idx}
-              className="p-6 bg-white rounded-lg shadow-lg hover:shadow-xl transform hover:scale-105 transition"
+              className="rounded-lg shadow-lg hover:shadow-xl transform hover:scale-105 transition"
             >
-              <Typography variant="h6" className="text-gray-700">
-                {card.title}
-              </Typography>
-              <Typography variant="body1" className="text-light-blue-600 mt-2">
-                {card.info}
-              </Typography>
-            </div>
+              <CardContent>
+                <Typography variant="h6" className="text-gray-700">
+                  {card.title}
+                </Typography>
+                <Typography
+                  variant="body1"
+                  className="text-light-blue-600 mt-2"
+                >
+                  {card.info}
+                </Typography>
+              </CardContent>
+            </Card>
           ))}
         </div>
 
@@ -143,7 +154,6 @@ const Dashboard: React.FC = () => {
             Transactions & Payments
           </Typography>
 
-          {/* Recent Transactions */}
           {recentTransactions.map((transaction) => (
             <div
               key={transaction.id}
@@ -173,6 +183,15 @@ const Dashboard: React.FC = () => {
             className="w-full mt-4"
           >
             View All Transactions
+          </Button>
+
+          {/* Logout Button */}
+          <Button
+            onClick={handleLogout}
+            color="secondary"
+            className="mt-6 w-full bg-red-500 text-white py-2 rounded-lg hover:bg-red-600 transition"
+          >
+            Logout
           </Button>
         </div>
       </div>
