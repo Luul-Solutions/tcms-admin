@@ -20,7 +20,12 @@ const Login: React.FC<LoginProps> = ({ setAuth }) => {
     e.preventDefault();
 
     if (email === TEMP_EMAIL && password === TEMP_PASSWORD) {
+      const user = {
+        email,
+        password,
+      };
       setAuth(true);
+      localStorage.setItem("user", user.email);
       navigate("/dashboard");
     } else {
       setError("Invalid email or password. Use the temporary credentials.");

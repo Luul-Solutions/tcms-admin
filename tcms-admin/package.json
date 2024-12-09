@@ -12,7 +12,9 @@
   },
   "dependencies": {
     "autoprefixer": "^10.4.20",
+    "axios": "^1.7.9",
     "chart.js": "^4.4.7",
+    "framer-motion": "^11.13.3",
     "lucide-react": "^0.468.0",
     "postcss": "^8.4.49",
     "ra-data-json-server": "^5.4.0",
@@ -20,6 +22,7 @@
     "react-admin": "^5.4.1",
     "react-chartjs-2": "^5.2.0",
     "react-dom": "^18.3.1",
+    "react-query": "^3.39.3",
     "react-router-dom": "^6.28.0"
   },
   "devDependencies": {

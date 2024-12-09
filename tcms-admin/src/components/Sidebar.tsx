@@ -20,6 +20,10 @@ const Sidebar: React.FC<{
 }> = ({ setAuth }) => {
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
 
+  const handleLogout = () => {
+    setAuth(false);
+    localStorage.removeItem("user");
+  };
   return (
     <div className="bg-gradient-to-br from-blue-900 to-blue-800 text-white w-64 h-screen p-6 rounded-r-3xl shadow-lg overflow-hidden flex flex-col">
       {/* Logo */}
@@ -64,7 +68,7 @@ const Sidebar: React.FC<{
           key={item.name}
           to={item.to}
           className={({ isActive }) =>
-            `flex items-center space-x-4 p-3 rounded-lg transition-transform hover:scale-105 ${
+            `flex items-center space-x-4 p-3 m-1.5 rounded-lg transition-transform hover:scale-105 ${
               isActive
                 ? "bg-blue-700 text-blue-300 shadow-md"
                 : "hover:bg-blue-700 hover:text-blue-300"
@@ -86,7 +90,7 @@ const Sidebar: React.FC<{
       </button>
 
       {isSettingsOpen && (
-        <div className="mt-2 bg-blue-900 rounded-lg shadow-lg overflow-hidden">
+        <div className="mt-2 bg-blue-900 rounded-lg shadow-lg overflow-hidden overflow-y-auto scrollbar-hide">
           {[
             {
               name: "My Profile",
@@ -132,7 +136,7 @@ const Sidebar: React.FC<{
 
       {/* Logout Button with Blue and White styling */}
       <button
-        onClick={() => setAuth(false)}
+        onClick={handleLogout}
         className="mt-6 w-full p-3 rounded-lg bg-blue-500 text-white font-medium shadow-lg hover:bg-blue-600 transition"
       >
         Logout

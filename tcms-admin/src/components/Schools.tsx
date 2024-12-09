@@ -4,8 +4,20 @@ import { CheckCircle, Ban, Trash2, Info, Settings } from "lucide-react";
 
 const Schools: React.FC = () => {
   const [schools, setSchools] = useState([
-    { name: "FastTrack Academy", status: "Active", adminContact: "admin@fasttrack.com", address: "123 Main St", phone: "555-1234" },
-    { name: "TechSchool", status: "Inactive", adminContact: "contact@techschool.com", address: "456 Elm St", phone: "555-5678" },
+    {
+      name: "FastTrack Academy",
+      status: "Active",
+      adminContact: "admin@fasttrack.com",
+      address: "123 Main St",
+      phone: "555-1234",
+    },
+    {
+      name: "TechSchool",
+      status: "Inactive",
+      adminContact: "contact@techschool.com",
+      address: "456 Elm St",
+      phone: "555-5678",
+    },
   ]);
   const [newSchool, setNewSchool] = useState({
     name: "",
@@ -18,7 +30,11 @@ const Schools: React.FC = () => {
 
   const addSchool = (e: React.FormEvent) => {
     e.preventDefault();
-    if (newSchool.name.trim() !== "" && newSchool.address.trim() !== "" && newSchool.adminContact.trim() !== "") {
+    if (
+      newSchool.name.trim() !== "" &&
+      newSchool.address.trim() !== "" &&
+      newSchool.adminContact.trim() !== ""
+    ) {
       setSchools([...schools, { ...newSchool, status: "Inactive" }]);
       setNewSchool({ name: "", address: "", adminContact: "", phone: "" }); // Reset form
       setIsFormVisible(false); // Hide form after submission
@@ -29,9 +45,12 @@ const Schools: React.FC = () => {
     setSchools((prevSchools) =>
       prevSchools.map((school, i) =>
         i === index
-          ? { ...school, status: school.status === "Active" ? "Inactive" : "Active" }
-          : school
-      )
+          ? {
+              ...school,
+              status: school.status === "Active" ? "Inactive" : "Active",
+            }
+          : school,
+      ),
     );
   };
 
@@ -65,41 +84,57 @@ const Schools: React.FC = () => {
             <h4 className="font-bold text-xl mb-4">School Information</h4>
             <form onSubmit={addSchool} className="space-y-4">
               <div>
-                <label className="block font-semibold text-gray-700">School Name</label>
+                <label className="block font-semibold text-gray-700">
+                  School Name
+                </label>
                 <input
                   type="text"
                   value={newSchool.name}
-                  onChange={(e) => setNewSchool({ ...newSchool, name: e.target.value })}
+                  onChange={(e) =>
+                    setNewSchool({ ...newSchool, name: e.target.value })
+                  }
                   className="w-full p-3 rounded-lg bg-gray-100 text-gray-800 focus:outline-none focus:ring-2 focus:ring-indigo-500"
                   required
                 />
               </div>
               <div>
-                <label className="block font-semibold text-gray-700">Address</label>
+                <label className="block font-semibold text-gray-700">
+                  Address
+                </label>
                 <input
                   type="text"
                   value={newSchool.address}
-                  onChange={(e) => setNewSchool({ ...newSchool, address: e.target.value })}
+                  onChange={(e) =>
+                    setNewSchool({ ...newSchool, address: e.target.value })
+                  }
                   className="w-full p-3 rounded-lg bg-gray-100 text-gray-800 focus:outline-none focus:ring-2 focus:ring-indigo-500"
                   required
                 />
               </div>
               <div>
-                <label className="block font-semibold text-gray-700">Admin Contact</label>
+                <label className="block font-semibold text-gray-700">
+                  Admin Contact
+                </label>
                 <input
                   type="email"
                   value={newSchool.adminContact}
-                  onChange={(e) => setNewSchool({ ...newSchool, adminContact: e.target.value })}
+                  onChange={(e) =>
+                    setNewSchool({ ...newSchool, adminContact: e.target.value })
+                  }
                   className="w-full p-3 rounded-lg bg-gray-100 text-gray-800 focus:outline-none focus:ring-2 focus:ring-indigo-500"
                   required
                 />
               </div>
               <div>
-                <label className="block font-semibold text-gray-700">Phone (optional)</label>
+                <label className="block font-semibold text-gray-700">
+                  Phone (optional)
+                </label>
                 <input
                   type="text"
                   value={newSchool.phone}
-                  onChange={(e) => setNewSchool({ ...newSchool, phone: e.target.value })}
+                  onChange={(e) =>
+                    setNewSchool({ ...newSchool, phone: e.target.value })
+                  }
                   className="w-full p-3 rounded-lg bg-gray-100 text-gray-800 focus:outline-none focus:ring-2 focus:ring-indigo-500"
                 />
               </div>
@@ -116,7 +151,9 @@ const Schools: React.FC = () => {
 
       {/* Schools List - Table Format */}
       <div className="p-6 bg-white rounded-lg shadow-lg">
-        <h4 className="font-bold text-xl text-gray-800 mb-6">List of Schools</h4>
+        <h4 className="font-bold text-xl text-gray-800 mb-6">
+          List of Schools
+        </h4>
         <table className="w-full table-auto border-collapse">
           <thead>
             <tr className="bg-gray-100 text-gray-700">
@@ -133,7 +170,9 @@ const Schools: React.FC = () => {
                 <td className="py-4 px-6">
                   <span
                     className={`font-semibold ${
-                      school.status === "Active" ? "text-green-600" : "text-red-600"
+                      school.status === "Active"
+                        ? "text-green-600"
+                        : "text-red-600"
                     }`}
                   >
                     {school.status}
@@ -152,7 +191,9 @@ const Schools: React.FC = () => {
                       } text-white shadow transition`}
                     >
                       {school.status === "Active" ? <Ban /> : <CheckCircle />}
-                      <span>{school.status === "Active" ? "Deactivate" : "Activate"}</span>
+                      <span>
+                        {school.status === "Active" ? "Deactivate" : "Activate"}
+                      </span>
                     </button>
 
                     {/* Delete */}
@@ -189,11 +230,45 @@ const Schools: React.FC = () => {
       {/* School Details Modal */}
       {selectedSchool && (
         <div className="fixed inset-0 bg-gray-900 bg-opacity-50 flex justify-center items-center z-10">
-          <div className="bg-white p-6 rounded-lg shadow-lg w-96">
-            <h3 className="font-bold text-xl mb-4">{selectedSchool.name} Details</h3>
-            <p className="mb-2"><strong>Address:</strong> {selectedSchool.address}</p>
-            <p className="mb-2"><strong>Phone:</strong> {selectedSchool.phone}</p>
-            <p className="mb-2"><strong>Admin Contact:</strong> {selectedSchool.adminContact}</p>
+          <div className="bg-white p-6 rounded-lg shadow-lg w-96 space-y-4">
+            <h3 className="font-bold text-xl text-indigo-600">
+              {selectedSchool.name} Details
+            </h3>
+            <div className="space-y-2">
+              <p className="text-gray-700">
+                <strong>Address:</strong> {selectedSchool.address}
+              </p>
+              <p className="text-gray-700">
+                <strong>Phone:</strong> {selectedSchool.phone}
+              </p>
+              <p className="text-gray-700">
+                <strong>Admin Contact:</strong> {selectedSchool.adminContact}
+              </p>
+              <p className="text-gray-700">
+                <strong>Status:</strong>{" "}
+                <span
+                  className={`font-semibold ${
+                    selectedSchool.status === "Active"
+                      ? "text-green-600"
+                      : "text-red-600"
+                  }`}
+                >
+                  {selectedSchool.status}
+                </span>
+              </p>
+            </div>
+
+            <div className="grid grid-cols-2 gap-4">
+              <div className="p-4 bg-blue-500 text-white rounded-lg shadow-lg text-center">
+                <h5 className="font-bold text-lg">Students</h5>
+                <p className="text-2xl font-semibold">150</p>
+              </div>
+              <div className="p-4 bg-green-500 text-white rounded-lg shadow-lg text-center">
+                <h5 className="font-bold text-lg">Teachers</h5>
+                <p className="text-2xl font-semibold">20</p>
+              </div>
+            </div>
+
             <button
               onClick={closeDetails}
               className="w-full bg-red-500 hover:bg-red-600 text-white py-2 rounded-lg"
@@ -206,7 +281,9 @@ const Schools: React.FC = () => {
 
       {/* Metrics Section */}
       <div className="p-6 bg-gray-50 rounded-lg shadow-lg">
-        <h4 className="font-bold text-xl text-gray-800 mb-6">Metrics Overview</h4>
+        <h4 className="font-bold text-xl text-gray-800 mb-6">
+          Metrics Overview
+        </h4>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           <div className="p-6 bg-blue-500 text-white rounded-lg shadow-lg">
             <h5 className="font-bold text-lg">Students</h5>

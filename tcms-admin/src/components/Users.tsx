@@ -1,7 +1,6 @@
-// Users.tsx
-
 import React, { useState } from "react";
 import { useParams } from "react-router-dom";
+import { motion, AnimatePresence } from "framer-motion";
 
 interface UserDetails {
   id: string;
@@ -44,6 +43,14 @@ const Users: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [users, setUsers] = useState<UserDetails[]>(mockUsers);
   const [selectedUsers, setSelectedUsers] = useState<string[]>([]);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [newUser, setNewUser] = useState({
+    firstname: "",
+    fullname: "",
+    email: "",
+    password: "",
+    phoneNumber: "",
+  });
 
   const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
     const term = e.target.value.toLowerCase();
@@ -57,7 +64,28 @@ const Users: React.FC = () => {
   };
 
   const handleAddUser = () => {
-    alert("Redirect to 'Add New User' form.");
+    setIsModalOpen(true);
+  };
+
+  const handleModalClose = () => {
+    setIsModalOpen(false);
+    setNewUser({
+      firstname: "",
+      fullname: "",
+      email: "",
+      password: "",
+      phoneNumber: "",
+    });
+  };
+
+  const handleNewUserChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setNewUser((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const handleCreateUser = () => {
+    alert(`User Created: ${JSON.stringify(newUser, null, 2)}`);
+    handleModalClose();
   };
 
   const handleRoleChange = (userId: string, newRole: string) => {
@@ -100,7 +128,10 @@ const Users: React.FC = () => {
           },
           { title: "Schools Managed", info: 5 },
         ].map((stat) => (
-          <div className="p-4 bg-white rounded-lg shadow-lg text-center">
+          <div
+            className="p-4 bg-white rounded-lg shadow-lg text-center"
+            key={stat.title}
+          >
             <h4 className="text-gray-700 font-bold">{stat.title}</h4>
             <p className="text-gray-600 mt-2 text-xl">{stat.info}</p>
           </div>
@@ -158,7 +189,9 @@ const Users: React.FC = () => {
             <p>
               Status:{" "}
               <span
-                className={`${user.status === "Active" ? "text-green-500" : "text-red-500"}`}
+                className={`${
+                  user.status === "Active" ? "text-green-500" : "text-red-500"
+                }`}
               >
                 {user.status}
               </span>
@@ -178,6 +211,85 @@ const Users: React.FC = () => {
           </div>
         ))}
       </div>
+      {isModalOpen && (
+        <AnimatePresence>
+          <div className="fixed inset-0 z-50 flex justify-end">
+            <motion.div
+              initial={{ x: "100%" }}
+              animate={{ x: 0 }}
+              exit={{ x: "100%" }}
+              transition={{ duration: 0.8 }} // Smooth transition (0.8 seconds)
+              className="bg-white p-6 shadow-lg w-1/3 h-full"
+            >
+              <h2 className="text-xl font-bold mb-4">Add New User</h2>
+              <div className="mb-4">
+                <label className="block mb-2 text-gray-700">First Name</label>
+                <input
+                  type="text"
+                  name="firstname"
+                  value={newUser.firstname}
+                  onChange={handleNewUserChange}
+                  className="w-full p-2 border rounded-lg"
+                />
+              </div>
+              <div className="mb-4">
+                <label className="block mb-2 text-gray-700">Full Name</label>
+                <input
+                  type="text"
+                  name="fullname"
+                  value={newUser.fullname}
+                  onChange={handleNewUserChange}
+                  className="w-full p-2 border rounded-lg"
+                />
+              </div>
+              <div className="mb-4">
+                <label className="block mb-2 text-gray-700">Email</label>
+                <input
+                  type="email"
+                  name="email"
+                  value={newUser.email}
+                  onChange={handleNewUserChange}
+                  className="w-full p-2 border rounded-lg"
+                />
+              </div>
+              <div className="mb-4">
+                <label className="block mb-2 text-gray-700">Password</label>
+                <input
+                  type="password"
+                  name="password"
+                  value={newUser.password}
+                  onChange={handleNewUserChange}
+                  className="w-full p-2 border rounded-lg"
+                />
+              </div>
+              <div className="mb-4">
+                <label className="block mb-2 text-gray-700">Phone Number</label>
+                <input
+                  type="text"
+                  name="phoneNumber"
+                  value={newUser.phoneNumber}
+                  onChange={handleNewUserChange}
+                  className="w-full p-2 border rounded-lg"
+                />
+              </div>
+              <div className="flex justify-end">
+                <button
+                  onClick={handleModalClose}
+                  className="px-4 py-2 bg-gray-300 text-gray-700 rounded-lg mr-2"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={handleCreateUser}
+                  className="px-4 py-2 bg-blue-500 text-white rounded-lg"
+                >
+                  Create
+                </button>
+              </div>
+            </motion.div>
+          </div>
+        </AnimatePresence>
+      )}
     </div>
   );
 };

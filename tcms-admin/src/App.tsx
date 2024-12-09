@@ -23,11 +23,12 @@ import Login from "./components/Login";
 
 const App: React.FC = () => {
   const [auth, setAuth] = useState<boolean>(false);
+  const user = localStorage.getItem("user");
 
   return (
     <Router>
       <div className="flex h-screen overflow-hidden">
-        {!auth ? (
+        {!user ? (
           <Login setAuth={setAuth} />
         ) : (
           <>
