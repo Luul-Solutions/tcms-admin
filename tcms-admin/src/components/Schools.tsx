@@ -5,9 +5,27 @@ import { motion, AnimatePresence } from "framer-motion";
 
 const Schools: React.FC = () => {
   const [schools, setSchools] = useState([
-    { name: "FastTrack Academy", status: "Active", adminContact: "admin@fasttrack.com", address: "123 Main St", phone: "555-1234" },
-    { name: "TechSchool", status: "Inactive", adminContact: "contact@techschool.com", address: "456 Elm St", phone: "555-5678" },
-    { name: "Greenwood School", status: "Active", adminContact: "info@greenwood.com", address: "789 Oak St", phone: "555-9876" },
+    {
+      name: "FastTrack Academy",
+      status: "Active",
+      adminContact: "admin@fasttrack.com",
+      address: "123 Main St",
+      phone: "555-1234",
+    },
+    {
+      name: "TechSchool",
+      status: "Inactive",
+      adminContact: "contact@techschool.com",
+      address: "456 Elm St",
+      phone: "555-5678",
+    },
+    {
+      name: "Greenwood School",
+      status: "Active",
+      adminContact: "info@greenwood.com",
+      address: "789 Oak St",
+      phone: "555-9876",
+    },
   ]);
   const [filteredSchools, setFilteredSchools] = useState(schools);
   const [newSchool, setNewSchool] = useState({
@@ -24,7 +42,7 @@ const Schools: React.FC = () => {
     const filtered = schools.filter(
       (school) =>
         school.name.toLowerCase().includes(term) ||
-        school.adminContact.toLowerCase().includes(term)
+        school.adminContact.toLowerCase().includes(term),
     );
     setFilteredSchools(filtered);
   };
@@ -39,8 +57,13 @@ const Schools: React.FC = () => {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    setSchools((prevSchools) => [...prevSchools, newSchool]);
-    setFilteredSchools((prevSchools) => [...prevSchools, newSchool]);
+
+    // Ensure new school includes the required 'status' field
+    const schoolWithStatus = { ...newSchool, status: "Active" };
+
+    setSchools((prevSchools) => [...prevSchools, schoolWithStatus]);
+    setFilteredSchools((prevSchools) => [...prevSchools, schoolWithStatus]);
+
     setNewSchool({ name: "", address: "", adminContact: "", phone: "" });
     handleCloseModal();
   };
@@ -57,16 +80,22 @@ const Schools: React.FC = () => {
     setSchools((prevSchools) =>
       prevSchools.map((school, i) =>
         i === index
-          ? { ...school, status: school.status === "Active" ? "Inactive" : "Active" }
-          : school
-      )
+          ? {
+              ...school,
+              status: school.status === "Active" ? "Inactive" : "Active",
+            }
+          : school,
+      ),
     );
     setFilteredSchools((prevSchools) =>
       prevSchools.map((school, i) =>
         i === index
-          ? { ...school, status: school.status === "Active" ? "Inactive" : "Active" }
-          : school
-      )
+          ? {
+              ...school,
+              status: school.status === "Active" ? "Inactive" : "Active",
+            }
+          : school,
+      ),
     );
   };
 
@@ -76,8 +105,15 @@ const Schools: React.FC = () => {
       <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 mb-6">
         {[
           { title: "Total Schools", info: schools.length },
-          { title: "Active Schools", info: schools.filter((school) => school.status === "Active").length },
-          { title: "Inactive Schools", info: schools.filter((school) => school.status === "Inactive").length },
+          {
+            title: "Active Schools",
+            info: schools.filter((school) => school.status === "Active").length,
+          },
+          {
+            title: "Inactive Schools",
+            info: schools.filter((school) => school.status === "Inactive")
+              .length,
+          },
           { title: "Schools Managed", info: 5 },
         ].map((stat, index) => (
           <motion.div
@@ -143,7 +179,9 @@ const Schools: React.FC = () => {
               <motion.button
                 onClick={() => toggleSchoolStatus(index)}
                 className={`px-4 py-2 rounded-lg text-white ${
-                  school.status === "Active" ? "bg-red-500 hover:bg-red-600" : "bg-green-500 hover:bg-green-600"
+                  school.status === "Active"
+                    ? "bg-red-500 hover:bg-red-600"
+                    : "bg-green-500 hover:bg-green-600"
                 }`}
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
@@ -181,7 +219,9 @@ const Schools: React.FC = () => {
               <h2 className="text-2xl font-bold mb-4">Add New School</h2>
               <form onSubmit={handleSubmit}>
                 <div className="mb-4">
-                  <label htmlFor="name" className="block text-gray-700">School Name</label>
+                  <label htmlFor="name" className="block text-gray-700">
+                    School Name
+                  </label>
                   <input
                     type="text"
                     id="name"
@@ -193,7 +233,9 @@ const Schools: React.FC = () => {
                   />
                 </div>
                 <div className="mb-4">
-                  <label htmlFor="address" className="block text-gray-700">Address</label>
+                  <label htmlFor="address" className="block text-gray-700">
+                    Address
+                  </label>
                   <input
                     type="text"
                     id="address"
@@ -205,7 +247,9 @@ const Schools: React.FC = () => {
                   />
                 </div>
                 <div className="mb-4">
-                  <label htmlFor="adminContact" className="block text-gray-700">Admin Contact</label>
+                  <label htmlFor="adminContact" className="block text-gray-700">
+                    Admin Contact
+                  </label>
                   <input
                     type="email"
                     id="adminContact"
@@ -217,36 +261,33 @@ const Schools: React.FC = () => {
                   />
                 </div>
                 <div className="mb-4">
-                  <label htmlFor="phone" className="block text-gray-700">Phone</label>
+                  <label htmlFor="phone" className="block text-gray-700">
+                    Phone Number
+                  </label>
                   <input
-                    type="text"
+                    type="tel"
                     id="phone"
                     name="phone"
                     value={newSchool.phone}
                     onChange={handleFormChange}
                     className="w-full p-3 mt-2 rounded-lg bg-gray-200"
+                    required
                   />
                 </div>
-                <div className="flex justify-between">
-                  <motion.button
-                    type="submit"
-                    className="px-6 py-3 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition"
-                    whileHover={{ scale: 1.05 }}
-                    whileTap={{ scale: 0.95 }}
-                  >
-                    Add School
-                  </motion.button>
-                  <motion.button
-                    type="button"
-                    onClick={handleCloseModal}
-                    className="px-6 py-3 bg-red-500 text-white rounded-lg hover:bg-red-600 transition"
-                    whileHover={{ scale: 1.05 }}
-                    whileTap={{ scale: 0.95 }}
-                  >
-                    Cancel
-                  </motion.button>
-                </div>
+
+                <button
+                  type="submit"
+                  className="w-full bg-blue-500 text-white py-2 rounded-lg mt-4"
+                >
+                  Submit
+                </button>
               </form>
+              <button
+                onClick={handleCloseModal}
+                className="mt-4 bg-red-500 text-white px-4 py-2 rounded-lg"
+              >
+                Close
+              </button>
             </motion.div>
           </motion.div>
         )}

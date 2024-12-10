@@ -1,0 +1,23 @@
+[
+  {
+    "id": "1",
+    "title": "System Update",
+    "message": "System update scheduled for 12 AM tonight.",
+    "status": "Info",
+    "date": "2023-11-10"
+  },
+  {
+    "id": "2",
+    "title": "New Report Available",
+    "message": "The Monthly Sales Report is now available.",
+    "status": "Alert",
+    "date": "2023-11-09"
+  },
+  {
+    "id": "3",
+    "title": "Security Notice",
+    "message": "Unusual login activity detected.",
+    "status": "Warning",
+    "date": "2023-11-08"
+  }
+]

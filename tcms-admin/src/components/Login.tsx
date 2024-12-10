@@ -7,8 +7,12 @@ interface LoginProps {
   setAuth: Dispatch<SetStateAction<boolean>>;
 }
 
-const TEMP_EMAIL = "temp@example.com";
-const TEMP_PASSWORD = "temp123";
+// Temporary fake users for now
+const fakeUsers = [
+  { email: "temp@example.com", password: "temp123" },
+  { email: "john@example.com", password: "pass123" },
+  { email: "admin@example.com", password: "admin123" },
+];
 
 const Login: React.FC<LoginProps> = ({ setAuth }) => {
   const [email, setEmail] = useState("");
@@ -19,16 +23,17 @@ const Login: React.FC<LoginProps> = ({ setAuth }) => {
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (email === TEMP_EMAIL && password === TEMP_PASSWORD) {
-      const user = {
-        email,
-        password,
-      };
+    // Check against fake users
+    const userExists = fakeUsers.some(
+      (user) => user.email === email && user.password === password,
+    );
+
+    if (userExists) {
       setAuth(true);
-      localStorage.setItem("user", user.email);
+      localStorage.setItem("user", email);
       navigate("/dashboard");
     } else {
-      setError("Invalid email or password. Use the temporary credentials.");
+      setError("Invalid email or password. Please try again.");
     }
   };
 
@@ -52,6 +57,7 @@ const Login: React.FC<LoginProps> = ({ setAuth }) => {
 
         {error && <p className="mb-4 text-red-500 font-medium">{error}</p>}
 
+        {/* Email Input */}
         <div className="mb-4">
           <label
             htmlFor="email"
@@ -64,7 +70,7 @@ const Login: React.FC<LoginProps> = ({ setAuth }) => {
           </label>
           <input
             id="email"
-            placeholder={`Use ${TEMP_EMAIL}`}
+            placeholder="Enter email"
             type="email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
@@ -72,6 +78,7 @@ const Login: React.FC<LoginProps> = ({ setAuth }) => {
           />
         </div>
 
+        {/* Password Input */}
         <div className="mb-6">
           <label
             htmlFor="password"
@@ -84,7 +91,7 @@ const Login: React.FC<LoginProps> = ({ setAuth }) => {
           </label>
           <input
             id="password"
-            placeholder={`Use ${TEMP_PASSWORD}`}
+            placeholder="Enter password"
             type="password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
@@ -92,12 +99,30 @@ const Login: React.FC<LoginProps> = ({ setAuth }) => {
           />
         </div>
 
+        {/* Submit Button */}
         <button
           type="submit"
           className="w-full bg-blue-600 text-white py-3 rounded-lg mt-4 hover:bg-blue-700 transition transform hover:scale-105"
         >
           Login
         </button>
+
+        {/* Future server-side integration commented out */}
+        {/*
+        const { data: users, error: fetchError } = useQuery(["users"], fetchUsers);
+
+        const handleServerLogin = (e) => {
+          e.preventDefault();
+
+          if (users && users.some(user => user.email === email && user.password === password)) {
+            setAuth(true);
+            localStorage.setItem("user", email);
+            navigate('/dashboard');
+          } else {
+            setError('Invalid login credentials');
+          }
+        };
+        */}
       </form>
     </div>
   );

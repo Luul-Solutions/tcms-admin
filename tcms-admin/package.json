@@ -14,7 +14,7 @@
     "autoprefixer": "^10.4.20",
     "axios": "^1.7.9",
     "chart.js": "^4.4.7",
-    "framer-motion": "^11.13.3",
+    "framer-motion": "^11.13.5",
     "lucide-react": "^0.468.0",
     "postcss": "^8.4.49",
     "ra-data-json-server": "^5.4.0",

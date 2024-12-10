@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { Dispatch, SetStateAction, useState } from "react";
 import { NavLink } from "react-router-dom";
 import {
   Home,
@@ -15,15 +15,13 @@ import {
   Users as TeamIcon,
 } from "lucide-react";
 
-const Sidebar: React.FC<{
-  setAuth: React.Dispatch<React.SetStateAction<boolean>>;
-}> = ({ setAuth }) => {
+interface SidebarProps {
+  setAuth: Dispatch<SetStateAction<boolean>>;
+}
+
+const Sidebar = ({ setAuth }: SidebarProps) => {
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
 
-  const handleLogout = () => {
-    setAuth(false);
-    localStorage.removeItem("user");
-  };
   return (
     <div className="bg-gradient-to-br from-blue-900 to-blue-800 text-white w-64 h-screen p-6 rounded-r-3xl shadow-lg overflow-hidden flex flex-col">
       {/* Logo */}
@@ -40,17 +38,17 @@ const Sidebar: React.FC<{
         { name: "Dashboard", to: "/", icon: <Home className="w-6 h-6" /> },
         {
           name: "Users",
-          to: "/user/:userName",
+          to: "/users",
           icon: <Users className="w-6 h-6" />,
         },
         {
           name: "Schools",
-          to: "/school/:schoolName",
+          to: "/schools",
           icon: <School className="w-6 h-6" />,
         },
         {
           name: "Reports",
-          to: "/report/:reportTitle",
+          to: "/reports",
           icon: <FileText className="w-6 h-6" />,
         },
         {
@@ -80,63 +78,65 @@ const Sidebar: React.FC<{
         </NavLink>
       ))}
 
-      {/* Settings Dropdown */}
-      <button
-        onClick={() => setIsSettingsOpen(!isSettingsOpen)}
-        className="mt-4 flex items-center space-x-4 p-3 rounded-lg hover:bg-blue-700"
-      >
-        <Settings className="w-6 h-6" />
-        <span>Settings</span>
-      </button>
+      {/* Settings Section */}
+      <div className="relative mt-4">
+        <button
+          onClick={() => setIsSettingsOpen(!isSettingsOpen)}
+          className="flex items-center space-x-4 p-3 rounded-lg hover:bg-blue-700"
+        >
+          <Settings className="w-6 h-6" />
+          <span>Settings</span>
+        </button>
 
-      {isSettingsOpen && (
-        <div className="mt-2 bg-blue-900 rounded-lg shadow-lg overflow-hidden overflow-y-auto scrollbar-hide">
-          {[
-            {
-              name: "My Profile",
-              to: "/settings/profile",
-              icon: <User className="w-6 h-6" />,
-            },
-            {
-              name: "Password",
-              to: "/settings/password",
-              icon: <Lock className="w-6 h-6" />,
-            },
-            {
-              name: "Team",
-              to: "/settings/team",
-              icon: <TeamIcon className="w-6 h-6" />,
-            },
-            {
-              name: "Details",
-              to: "/settings/details",
-              icon: <Info className="w-6 h-6" />,
-            },
-            {
-              name: "Appearance",
-              to: "/settings/appearance",
-              icon: <Sliders className="w-6 h-6" />,
-            },
-          ].map((submenu) => (
-            <NavLink
-              key={submenu.name}
-              to={submenu.to}
-              className={({ isActive }) =>
-                `flex items-center space-x-4 px-4 py-2 rounded-lg transition-transform hover:bg-blue-700 ${
-                  isActive ? "bg-blue-800 shadow-md" : "hover:text-blue-300"
-                }`
-              }
-            >
-              {submenu.icon}
-              <span>{submenu.name}</span>
-            </NavLink>
-          ))}
-        </div>
-      )}
+        {isSettingsOpen && (
+          <div className="bg-blue-900 rounded-lg shadow-lg mt-1 p-4">
+            {[
+              {
+                name: "Profile",
+                to: "/settings/profile",
+                icon: <User className="w-5 h-5" />,
+              },
+              {
+                name: "Password",
+                to: "/settings/password",
+                icon: <Lock className="w-5 h-5" />,
+              },
+              {
+                name: "Team",
+                to: "/settings/team",
+                icon: <TeamIcon className="w-5 h-5" />,
+              },
+              {
+                name: "Details",
+                to: "/settings/details",
+                icon: <Info className="w-5 h-5" />,
+              },
+              {
+                name: "Appearance",
+                to: "/settings/appearance",
+                icon: <Sliders className="w-5 h-5" />,
+              },
+            ].map((submenu) => (
+              <NavLink
+                key={submenu.name}
+                to={submenu.to}
+                className={({ isActive }) =>
+                  `block rounded-lg mt-1 py-2 px-3 transition-transform ${
+                    isActive ? "bg-blue-800 shadow-md" : "hover:bg-blue-700"
+                  }`
+                }
+              >
+                {submenu.icon}
+                <span>{submenu.name}</span>
+              </NavLink>
+            ))}
+          </div>
+        )}
+      </div>
 
-      {/* Logout Button with Blue and White styling */}
+      {/* Logout Button */}
       <button
-        onClick={handleLogout}
+        onClick={() => setAuth(false)}
         className="mt-6 w-full p-3 rounded-lg bg-blue-500 text-white font-medium shadow-lg hover:bg-blue-600 transition"
       >
         Logout

@@ -12,42 +12,47 @@ import Schools from "./components/Schools";
 import Users from "./components/Users";
 import Reports from "./components/Reports";
 import Notifications from "./components/Notifications";
-import AdminSettings from "./components/Settings";
-import Profile from "./components/Settings/Profile";
-import Password from "./components/Settings/Password";
-import Team from "./components/Settings/Team";
-import Details from "./components/Settings/Details";
-import Appearance from "./components/Settings/Appearance";
 import Transactions from "./components/Transactions";
 import Login from "./components/Login";
 
+import Appearance from "./components/Settings/Appearance";
+import Password from "./components/Settings/Password";
+import Team from "./components/Settings/Team";
+import Details from "./components/Settings/Details";
+import Profile from "./components/Settings/Profile";
+
 const App: React.FC = () => {
-  const [auth, setAuth] = useState<boolean>(false);
-  const user = localStorage.getItem("user");
+  const [auth, setAuth] = useState(false);
+
+  useEffect(() => {
+    const user = localStorage.getItem("user");
+    setAuth(!!user);
+  }, []);
 
   return (
     <Router>
-      <div className="flex h-screen overflow-hidden">
-        {!user ? (
+      <div className="flex">
+        {!auth ? (
           <Login setAuth={setAuth} />
         ) : (
           <>
+            {/* Sidebar Component */}
             <Sidebar setAuth={setAuth} />
-            <div className="flex-1 p-8 bg-gray-100 min-h-screen overflow-auto">
+
+            {/* Main content area */}
+            <div className="p-8 min-h-screen flex-1 bg-gray-100">
               <Routes>
-                <Route path="/" element={<Dashboard setAuth={undefined} />} />
-                <Route path="/school/:schoolName" element={<Schools />} />
-                <Route path="/user/:userName" element={<Users />} />
-                <Route path="/report/:reportTitle" element={<Reports />} />
+                <Route path="/" element={<Dashboard setAuth={setAuth} />} />
+                <Route path="/schools" element={<Schools />} />
+                <Route path="/users" element={<Users />} />
+                <Route path="/reports" element={<Reports />} />
                 <Route path="/notifications" element={<Notifications />} />
-                <Route path="/settings" element={<AdminSettings />} />
+                <Route path="/transactions" element={<Transactions />} />
                 <Route path="/settings/profile" element={<Profile />} />
+                <Route path="/settings/appearance" element={<Appearance />} />
                 <Route path="/settings/password" element={<Password />} />
                 <Route path="/settings/team" element={<Team />} />
                 <Route path="/settings/details" element={<Details />} />
-                <Route path="/settings/appearance" element={<Appearance />} />
-                <Route path="/transactions" element={<Transactions />} />
-                {/* Redirect unknown routes to Dashboard */}
                 <Route path="*" element={<Navigate to="/" replace />} />
               </Routes>
             </div>

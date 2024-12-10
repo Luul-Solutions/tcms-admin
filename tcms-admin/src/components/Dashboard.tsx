@@ -1,6 +1,14 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Card, CardContent, Typography, Button } from "@mui/material";
+
+interface Transaction {
+  id: number;
+  message: string;
+  amount: number;
+  date: string;
+  status: "Paid" | "Pending";
+}
 
 const Dashboard: React.FC<{ setAuth: any }> = ({ setAuth }) => {
   const [searchTerm, setSearchTerm] = useState("");
@@ -17,7 +25,7 @@ const Dashboard: React.FC<{ setAuth: any }> = ({ setAuth }) => {
   const totalExpenses = 15000;
   const pendingPayments = 10;
 
-  const recentTransactions = [
+  const [recentTransactions, setRecentTransactions] = useState<Transaction[]>([
     {
       id: 1,
       message: "Payment for school fees",
@@ -39,7 +47,7 @@ const Dashboard: React.FC<{ setAuth: any }> = ({ setAuth }) => {
       date: "27/11/2024",
       status: "Paid",
     },
-  ];
+  ]);
 
   const recentActivities = [
     { action: "Added New User", timestamp: "01/12/2023 10:15" },
@@ -50,8 +58,37 @@ const Dashboard: React.FC<{ setAuth: any }> = ({ setAuth }) => {
 
   const handleLogout = () => {
     setAuth(false); // Clear authentication state
-    navigate("/"); // Redirect to the login page
+    navigate("/"); // Redirect to login
   };
+
+  // Placeholder for fetching transactions from the backend
+  useEffect(() => {
+    const fetchTransactions = async () => {
+      try {
+        /*
+        const response = await fetch("/api/transactions");
+        const data: Transaction[] = await response.json();
+        setRecentTransactions(data);
+        */
+        console.log("Fetching transactions from the backend...");
+      } catch (error) {
+        console.error("Failed to load transactions from backend", error);
+      }
+    };
+
+    fetchTransactions();
+
+    /*
+    // Placeholder for fetching transactions from JSON
+    try {
+      const response = await fetch("/data/transactions.json");
+      const data: Transaction[] = await response.json();
+      setRecentTransactions(data);
+    } catch (err) {
+      console.error("Failed to load transactions from JSON", err);
+    }
+    */
+  }, []);
 
   return (
     <div className="flex bg-light-blue-50 h-full min-h-screen p-6">
@@ -154,23 +191,21 @@ const Dashboard: React.FC<{ setAuth: any }> = ({ setAuth }) => {
             Transactions & Payments
           </Typography>
 
-          {recentTransactions.map((transaction) => (
+          {recentTransactions.map((txn) => (
             <div
-              key={transaction.id}
+              key={txn.id}
               className={`p-4 mb-4 rounded-lg shadow-md ${
-                transaction.status === "Paid"
+                txn.status === "Paid"
                   ? "bg-light-blue-100 border-l-4 border-light-blue-600"
                   : "bg-yellow-100 border-l-4 border-yellow-600"
               } hover:bg-light-blue-200 transition`}
             >
-              <Typography className="text-gray-700">
-                {transaction.message}
+              <Typography>{txn.message}</Typography>
+              <Typography className="text-gray-600 mt-1">
+                Date: {txn.date} | Status: {txn.status}
               </Typography>
-              <Typography className="text-gray-600 text-sm mt-1">
-                Date: {transaction.date} | Status: {transaction.status}
-              </Typography>
-              <Typography variant="h6" className="text-gray-900 mt-2 font-bold">
-                £{transaction.amount}
+              <Typography variant="h6" className="mt-2 font-bold">
+                £{txn.amount}
               </Typography>
             </div>
           ))}
