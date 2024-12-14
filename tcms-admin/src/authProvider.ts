@@ -1,21 +1,36 @@
 import { AuthProvider, HttpError } from "react-admin";
 import data from "./users.json";
 
-/**
- * This authProvider is only for test purposes. Don't use it in production.
- */
+
+type User = {
+  username: string;
+  password: string;
+  id: string;
+  name: string;
+  role: string;
+  status: string;
+  email: string;
+  school: string;
+};
+
+
+const users: User[] = data as User[];
+
 export const authProvider: AuthProvider = {
+
   login: ({ username, password }) => {
-    const user = data.users.find(
+    
+    const user = users.find(
       (u) => u.username === username && u.password === password,
     );
 
     if (user) {
-      // eslint-disable-next-line no-unused-vars, @typescript-eslint/no-unused-vars
+      
       const { password, ...userToPersist } = user;
       localStorage.setItem("user", JSON.stringify(userToPersist));
       return Promise.resolve();
     }
+
 
     return Promise.reject(
       new HttpError("Unauthorized", 401, {
@@ -23,20 +38,22 @@ export const authProvider: AuthProvider = {
       }),
     );
   },
+
   logout: () => {
     localStorage.removeItem("user");
     return Promise.resolve();
   },
+
   checkError: () => Promise.resolve(),
+
   checkAuth: () =>
     localStorage.getItem("user") ? Promise.resolve() : Promise.reject(),
-  getPermissions: () => {
-    return Promise.resolve(undefined);
-  },
+
+  getPermissions: () => Promise.resolve(undefined),
+
   getIdentity: () => {
     const persistedUser = localStorage.getItem("user");
     const user = persistedUser ? JSON.parse(persistedUser) : null;
-
     return Promise.resolve(user);
   },
 };

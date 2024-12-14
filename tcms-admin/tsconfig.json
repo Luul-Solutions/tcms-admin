@@ -12,8 +12,13 @@
     "noEmit": true, // Don't emit output files during type-checking
     "isolatedModules": true, // Enable isolated modules for better support with Vite
     "incremental": true, // Speed up builds with incremental compilation
-    "lib": ["esnext", "dom"] // Include DOM types for React
+    "lib": ["esnext", "dom"], // Include DOM and ESNext types for React
+    "baseUrl": ".", // Set base directory for resolving module paths
+    "paths": {
+      "@components/*": ["src/components/*"], // Example alias for components
+      "@pages/*": ["src/components/Pages/*"] // Example alias for pages
+    }
   },
-  "include": ["src/**/*.tsx", "src/**/*.ts"],
-  "exclude": ["node_modules", "dist"]
+  "include": ["src/**/*.tsx", "src/**/*.ts", "src/**/*.js", "src/**/*.jsx"],
+  "exclude": ["node_modules", "dist", "build"]
 }

@@ -1,4 +1,3 @@
-// Login.tsx
 import React, { useState, Dispatch, SetStateAction } from "react";
 import { useNavigate } from "react-router-dom";
 import { Mail, Lock } from "lucide-react";
@@ -17,11 +16,18 @@ const fakeUsers = [
 const Login: React.FC<LoginProps> = ({ setAuth }) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [error, setError] = useState("");
+  const [error, setError] = useState<string | null>(null);
   const navigate = useNavigate();
 
+  // Handle login logic
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
+
+    // Basic validation
+    if (!email || !password) {
+      setError("Both email and password are required.");
+      return;
+    }
 
     // Check against fake users
     const userExists = fakeUsers.some(
@@ -31,10 +37,32 @@ const Login: React.FC<LoginProps> = ({ setAuth }) => {
     if (userExists) {
       setAuth(true);
       localStorage.setItem("user", email);
-      navigate("/dashboard");
+      navigate("/");
     } else {
       setError("Invalid email or password. Please try again.");
     }
+
+    // Example of backend integration (commented out)
+    /*
+    fetch('/api/login', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ email, password }),
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        if (data.success) {
+          setAuth(true);
+          localStorage.setItem("user", email);
+          navigate("/");
+        } else {
+          setError("Invalid email or password. Please try again.");
+        }
+      })
+      .catch((error) => console.error("Error during login:", error));
+    */
   };
 
   return (
@@ -43,6 +71,7 @@ const Login: React.FC<LoginProps> = ({ setAuth }) => {
         onSubmit={handleLogin}
         className="bg-white rounded-lg shadow-lg p-12 max-w-md w-full backdrop-blur-lg bg-opacity-80"
       >
+        {/* Logo */}
         <div className="mb-6 flex justify-center">
           <img
             src="/logo icon.png"
@@ -51,10 +80,12 @@ const Login: React.FC<LoginProps> = ({ setAuth }) => {
           />
         </div>
 
+        {/* Heading */}
         <h2 className="text-3xl font-bold mb-6 text-gray-800 text-center">
           Login
         </h2>
 
+        {/* Error Message */}
         {error && <p className="mb-4 text-red-500 font-medium">{error}</p>}
 
         {/* Email Input */}
@@ -75,6 +106,7 @@ const Login: React.FC<LoginProps> = ({ setAuth }) => {
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             className="mt-1 w-full p-3 rounded-lg border focus:outline-none focus:ring-2 focus:ring-blue-500 transition"
+            required
           />
         </div>
 
@@ -96,33 +128,29 @@ const Login: React.FC<LoginProps> = ({ setAuth }) => {
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             className="mt-1 w-full p-3 rounded-lg border focus:outline-none focus:ring-2 focus:ring-blue-500 transition"
+            required
           />
         </div>
 
         {/* Submit Button */}
         <button
           type="submit"
-          className="w-full bg-blue-600 text-white py-3 rounded-lg mt-4 hover:bg-blue-700 transition transform hover:scale-105"
+          className="w-full bg-blue-600 text-white py-3 rounded-lg mt-4 hover:bg-blue-700 transition"
         >
           Login
         </button>
 
-        {/* Future server-side integration commented out */}
-        {/*
-        const { data: users, error: fetchError } = useQuery(["users"], fetchUsers);
-
-        const handleServerLogin = (e) => {
-          e.preventDefault();
-
-          if (users && users.some(user => user.email === email && user.password === password)) {
-            setAuth(true);
-            localStorage.setItem("user", email);
-            navigate('/dashboard');
-          } else {
-            setError('Invalid login credentials');
-          }
-        };
-        */}
+        {/* Footer / Links */}
+        <p className="mt-4 text-center text-gray-600 text-sm">
+          For demo purposes, use one of these login credentials:
+        </p>
+        <ul className="mt-2">
+          {fakeUsers.map((user) => (
+            <li key={user.email} className="text-gray-600">
+              📧 {user.email} - 🔑 {user.password}
+            </li>
+          ))}
+        </ul>
       </form>
     </div>
   );
