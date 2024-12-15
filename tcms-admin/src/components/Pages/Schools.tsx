@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { CheckCircle, Ban, Trash2, Info, Settings } from "lucide-react";
 import { Link } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
-import { getSchools } from "../services/auth";
+import { getSchools } from "../../services/auth";
 import { useQuery } from "react-query";
 
 const Schools: React.FC = () => {
