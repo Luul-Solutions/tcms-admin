@@ -1,26 +1,18 @@
 [
   {
     "id": "1",
-    "name": "Alice Johnson",
+    "name": "John Doe",
     "role": "Admin",
     "status": "Active",
-    "email": "alice@example.com",
-    "school": "Central School"
+    "email": "john.doe@example.com",
+    "school": "Greenwood High"
   },
   {
     "id": "2",
-    "name": "Bob Smith",
+    "name": "Jane Doe",
     "role": "Manager",
     "status": "Inactive",
-    "email": "bob@example.com",
-    "school": "Lincoln High"
-  },
-  {
-    "id": "3",
-    "name": "Charlie Brown",
-    "role": "Admin",
-    "status": "Active",
-    "email": "charlie@example.com",
-    "school": "Greenwood"
+    "email": "jane.doe@example.com",
+    "school": "Lakeside Elementary"
   }
 ]

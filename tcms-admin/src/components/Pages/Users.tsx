@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { useParams } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
-import usersData from "../users.json";
+import usersData from "../../users.json";
 
 interface UserDetails {
   id: string;
@@ -58,8 +58,26 @@ const Users: React.FC = () => {
   };
 
   const handleCreateUser = () => {
+    // Placeholder for backend integration
     alert(`User Created: ${JSON.stringify(newUser, null, 2)}`);
     handleModalClose();
+
+    // Example of backend integration (commented out)
+    /*
+    fetch('/api/createUser', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(newUser),
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        alert(`User Created: ${JSON.stringify(data, null, 2)}`);
+        handleModalClose();
+      })
+      .catch((error) => console.error("Error creating user:", error));
+    */
   };
 
   const handleRoleChange = (userId: string, newRole: string) => {
@@ -67,6 +85,22 @@ const Users: React.FC = () => {
       user.id === userId ? { ...user, role: newRole } : user,
     );
     setUsers(updatedUsers);
+
+    // Example of backend integration for role change (commented out)
+    /*
+    fetch(`/api/users/${userId}/role`, {
+      method: 'PATCH',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ role: newRole }),
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        alert(`Role Updated: ${JSON.stringify(data, null, 2)}`);
+      })
+      .catch((error) => console.error("Error updating role:", error));
+    */
   };
 
   const handleBulkAction = (action: string) => {
@@ -76,30 +110,31 @@ const Users: React.FC = () => {
     }
     alert(`${action} action performed on users: ${selectedUsers.join(", ")}`);
     setSelectedUsers([]);
+
+    // Example of backend integration for bulk action (commented out)
+    /*
+    fetch('/api/bulkAction', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ action, userIds: selectedUsers }),
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        alert(`${action} action performed: ${JSON.stringify(data, null, 2)}`);
+      })
+      .catch((error) => console.error("Error performing bulk action:", error));
+    */
   };
 
   const handleCheckboxChange = (userId: string) => {
-    if (selectedUsers.includes(userId)) {
-      setSelectedUsers(selectedUsers.filter((id) => id !== userId));
-    } else {
-      setSelectedUsers([...selectedUsers, userId]);
-    }
+    setSelectedUsers((prev) =>
+      prev.includes(userId)
+        ? prev.filter((id) => id !== userId)
+        : [...prev, userId],
+    );
   };
-
-  // Future backend integration placeholder
-  /*
-  const { data: fetchedUsers, error } = useQuery('users', async () => {
-    const res = await fetch('https://your-server.com/users.json');
-    if (!res.ok) throw new Error('Failed to fetch users');
-    return res.json();
-  });
-
-  useEffect(() => {
-    if (fetchedUsers) {
-      setUsers(fetchedUsers);
-    }
-  }, [fetchedUsers]);
-  */
 
   return (
     <div className="p-6 bg-gray-100 min-h-screen">
@@ -137,6 +172,7 @@ const Users: React.FC = () => {
             <select
               onChange={(e) => handleRoleChange(user.id, e.target.value)}
               className="mt-2 w-full rounded-lg bg-gray-100"
+              value={user.role}
             >
               {["Admin", "Manager"].map((role) => (
                 <option key={role} value={role}>

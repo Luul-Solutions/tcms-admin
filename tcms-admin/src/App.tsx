@@ -6,41 +6,41 @@ import {
   Navigate,
 } from "react-router-dom";
 
-import Sidebar from "./components/Sidebar";
-import Dashboard from "./components/Dashboard";
-import Schools from "./components/Schools";
-import Users from "./components/Users";
-import Reports from "./components/Reports";
-import Notifications from "./components/Notifications";
-import Transactions from "./components/Transactions";
-import Login from "./components/Login";
+import Sidebar from "./components/Pages/Sidebar";
+import Dashboard from "./components/Pages/Dashboard";
+import Schools from "./components/Pages/Schools";
+import Users from "./components/Pages/Users";
+import Reports from "./components/Pages/Reports";
+import Notifications from "./components/Pages/Notifications";
+import Transactions from "./components/Pages/Transactions";
+import Login from "./components/Pages/Login";
 
-import Appearance from "./components/Settings/Appearance";
-import Password from "./components/Settings/Password";
-import Team from "./components/Settings/Team";
-import Details from "./components/Settings/Details";
-import Profile from "./components/Settings/Profile";
+import Appearance from "./components/Pages/Settings/Appearance";
+import Password from "./components/Pages/Settings/Password";
+import Team from "./components/Pages/Settings/Team";
+import Details from "./components/Pages/Settings/Details";
+import Profile from "./components/Pages/Settings/Profile";
 
 const App: React.FC = () => {
   const [auth, setAuth] = useState(false);
 
   useEffect(() => {
     const user = localStorage.getItem("user");
+    console.log("Auth state loaded from local storage:", !!user);
     setAuth(!!user);
   }, []);
 
+  console.log("Auth state:", auth);
+
   return (
     <Router>
-      <div className="flex">
+      <div className="flex h-screen bg-gray-100">
         {!auth ? (
           <Login setAuth={setAuth} />
         ) : (
           <>
-            {/* Sidebar Component */}
             <Sidebar setAuth={setAuth} />
-
-            {/* Main content area */}
-            <div className="p-8 min-h-screen flex-1 bg-gray-100">
+            <div className="p-8 min-h-screen flex-1 bg-gray-100 overflow-auto">
               <Routes>
                 <Route path="/" element={<Dashboard setAuth={setAuth} />} />
                 <Route path="/schools" element={<Schools />} />
