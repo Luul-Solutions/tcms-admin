@@ -1,9 +1,17 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { CheckCircle, Ban, Trash2, Info, Settings } from "lucide-react";
 import { Link } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
+import { getSchools } from "../services/auth";
+import { useQuery } from "react-query";
 
 const Schools: React.FC = () => {
+  const { data, isError, isLoading, error } = useQuery(
+    "getSchools",
+    getSchools,
+  );
+
+  console.log(data);
   const [schools, setSchools] = useState([
     {
       name: "FastTrack Academy",
@@ -98,23 +106,29 @@ const Schools: React.FC = () => {
       ),
     );
   };
-
+  if (isLoading) {
+    return <h2>Loading....</h2>;
+  }
+  if (isError) {
+    return <p></p>;
+  }
   return (
     <div className="p-6 bg-gray-50 min-h-screen">
       {/* Quick Stats Section */}
       <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 mb-6">
         {[
-          { title: "Total Schools", info: schools.length },
+          { title: "Total Schools", info: data.count },
           {
             title: "Active Schools",
-            info: schools.filter((school) => school.status === "Active").length,
+            info: data.rows.filter((school) => school.planStatus === "active")
+              .length,
           },
           {
             title: "Inactive Schools",
-            info: schools.filter((school) => school.status === "Inactive")
+            info: data.rows.filter((school) => school.planStatus === "inactive")
               .length,
           },
-          { title: "Schools Managed", info: 5 },
+          { title: "Schools Managed", info: data.count },
         ].map((stat, index) => (
           <motion.div
             key={index}
@@ -151,7 +165,7 @@ const Schools: React.FC = () => {
 
       {/* School List */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {filteredSchools.map((school, index) => (
+        {data.rows.map((school, index) => (
           <motion.div
             key={index}
             className="relative p-6 bg-white rounded-lg shadow-lg hover:shadow-2xl transition-all"
@@ -164,14 +178,14 @@ const Schools: React.FC = () => {
               onChange={() => handleCheckboxChange(school.name)}
             />
             <h2 className="font-bold text-gray-900 text-xl">{school.name}</h2>
-            <p>Admin Contact: {school.adminContact}</p>
+            <p>Admin Contact: {school.email}</p>
             <p>Address: {school.address}</p>
             <p>
               Status:{" "}
               <span
-                className={`${school.status === "Active" ? "text-green-500" : "text-red-500"}`}
+                className={`${school.planStatus === "Active" ? "text-green-500" : "text-red-500"}`}
               >
-                {school.status}
+                {school.planStatus}
               </span>
             </p>
 
@@ -186,12 +200,12 @@ const Schools: React.FC = () => {
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
               >
-                {school.status === "Active" ? <Ban /> : <CheckCircle />}
-                {school.status === "Active" ? "Deactivate" : "Activate"}
+                {data.rows.planStatus === "active" ? <Ban /> : <CheckCircle />}
+                {data.rows.status === "active" ? "Deactivate" : "Activate"}
               </motion.button>
 
               <Link
-                to={`/school/edit/${school.name}`}
+                to={`/school/edit/${data.name}`}
                 className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition"
               >
                 <Settings />

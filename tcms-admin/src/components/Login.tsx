@@ -1,18 +1,12 @@
-// Login.tsx
 import React, { useState, Dispatch, SetStateAction } from "react";
 import { useNavigate } from "react-router-dom";
+import { useMutation } from "react-query";
+import { login } from "../services/auth";
 import { Mail, Lock } from "lucide-react";
 
 interface LoginProps {
   setAuth: Dispatch<SetStateAction<boolean>>;
 }
-
-// Temporary fake users for now
-const fakeUsers = [
-  { email: "temp@example.com", password: "temp123" },
-  { email: "john@example.com", password: "pass123" },
-  { email: "admin@example.com", password: "admin123" },
-];
 
 const Login: React.FC<LoginProps> = ({ setAuth }) => {
   const [email, setEmail] = useState("");
@@ -20,21 +14,23 @@ const Login: React.FC<LoginProps> = ({ setAuth }) => {
   const [error, setError] = useState("");
   const navigate = useNavigate();
 
+  const mutation = useMutation({
+    mutationFn: ({ email, password }: { email: string; password: string }) =>
+      login(email, password),
+    onSuccess: (data) => {
+      setAuth(true);
+      localStorage.setItem("user", JSON.stringify(data)); // Store token or user details
+      navigate("/dashboard");
+    },
+    onError: (err: any) => {
+      setError(err.response?.data?.message || "Invalid email or password.");
+    },
+  });
+
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
-
-    // Check against fake users
-    const userExists = fakeUsers.some(
-      (user) => user.email === email && user.password === password,
-    );
-
-    if (userExists) {
-      setAuth(true);
-      localStorage.setItem("user", email);
-      navigate("/dashboard");
-    } else {
-      setError("Invalid email or password. Please try again.");
-    }
+    setError(""); // Reset error state
+    mutation.mutate({ email, password });
   };
 
   return (
@@ -102,27 +98,11 @@ const Login: React.FC<LoginProps> = ({ setAuth }) => {
         {/* Submit Button */}
         <button
           type="submit"
-          className="w-full bg-blue-600 text-white py-3 rounded-lg mt-4 hover:bg-blue-700 transition transform hover:scale-105"
+          disabled={mutation.isLoading}
+          className="w-full bg-blue-600 text-white py-3 rounded-lg mt-4 hover:bg-blue-700 transition transform hover:scale-105 disabled:opacity-50"
         >
-          Login
+          {mutation.isLoading ? "Logging in..." : "Login"}
         </button>
-
-        {/* Future server-side integration commented out */}
-        {/*
-        const { data: users, error: fetchError } = useQuery(["users"], fetchUsers);
-
-        const handleServerLogin = (e) => {
-          e.preventDefault();
-
-          if (users && users.some(user => user.email === email && user.password === password)) {
-            setAuth(true);
-            localStorage.setItem("user", email);
-            navigate('/dashboard');
-          } else {
-            setError('Invalid login credentials');
-          }
-        };
-        */}
       </form>
     </div>
   );
