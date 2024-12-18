@@ -20,6 +20,7 @@ import Password from "./components/Pages/Settings/Password";
 import Team from "./components/Pages/Settings/Team";
 import Details from "./components/Pages/Settings/Details";
 import Profile from "./components/Pages/Settings/Profile";
+import ErrorBoundary from "./components/ErrorBoundary";
 
 const App: React.FC = () => {
   const [auth, setAuth] = useState(false);
@@ -33,33 +34,35 @@ const App: React.FC = () => {
   console.log("Auth state:", auth);
 
   return (
-    <Router>
-      <div className="flex h-screen bg-gray-100">
-        {!auth ? (
-          <Login setAuth={setAuth} />
-        ) : (
-          <>
-            <Sidebar setAuth={setAuth} />
-            <div className="p-8 min-h-screen flex-1 bg-gray-100 overflow-auto">
-              <Routes>
-                <Route path="/" element={<Dashboard setAuth={setAuth} />} />
-                <Route path="/schools" element={<Schools />} />
-                <Route path="/users" element={<Users />} />
-                <Route path="/reports" element={<Reports />} />
-                <Route path="/notifications" element={<Notifications />} />
-                <Route path="/transactions" element={<Transactions />} />
-                <Route path="/settings/profile" element={<Profile />} />
-                <Route path="/settings/appearance" element={<Appearance />} />
-                <Route path="/settings/password" element={<Password />} />
-                <Route path="/settings/team" element={<Team />} />
-                <Route path="/settings/details" element={<Details />} />
-                <Route path="*" element={<Navigate to="/" replace />} />
-              </Routes>
-            </div>
-          </>
-        )}
-      </div>
-    </Router>
+    <ErrorBoundary>
+      <Router>
+        <div className="flex h-screen bg-gray-100">
+          {!auth ? (
+            <Login setAuth={setAuth} />
+          ) : (
+            <>
+              <Sidebar setAuth={setAuth} />
+              <div className="p-8 min-h-screen flex-1 bg-gray-100 overflow-auto">
+                <Routes>
+                  <Route path="/" element={<Dashboard setAuth={setAuth} />} />
+                  <Route path="/schools" element={<Schools />} />
+                  <Route path="/users" element={<Users />} />
+                  <Route path="/reports" element={<Reports />} />
+                  <Route path="/notifications" element={<Notifications />} />
+                  <Route path="/transactions" element={<Transactions />} />
+                  <Route path="/settings/profile" element={<Profile />} />
+                  <Route path="/settings/appearance" element={<Appearance />} />
+                  <Route path="/settings/password" element={<Password />} />
+                  <Route path="/settings/team" element={<Team />} />
+                  <Route path="/settings/details" element={<Details />} />
+                  <Route path="*" element={<Navigate to="/" replace />} />
+                </Routes>
+              </div>
+            </>
+          )}
+        </div>
+      </Router>
+    </ErrorBoundary>
   );
 };
 

@@ -2,13 +2,18 @@ import React, { useEffect, useState } from "react";
 import { CheckCircle, Ban, Trash2, Info, Settings } from "lucide-react";
 import { Link } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
-import { getSchools } from "../../services/auth";
+import { getSchools } from "../../services/getSchools";
 import { useQuery } from "react-query";
+import Loading from "../Loading";
+import CreateSchool from "../school/CreateSchool";
 
 const Schools: React.FC = () => {
   const { data, isError, isLoading, error } = useQuery(
     "getSchools",
     getSchools,
+    {
+      staleTime: 0,
+    },
   );
 
   console.log(data);
@@ -107,10 +112,10 @@ const Schools: React.FC = () => {
     );
   };
   if (isLoading) {
-    return <h2>Loading....</h2>;
+    return <Loading />;
   }
   if (isError) {
-    return <p></p>;
+    return <p className="text-center text-red-400 text-xl">{String(error)}</p>;
   }
   return (
     <div className="p-6 bg-gray-50 min-h-screen">
@@ -217,94 +222,7 @@ const Schools: React.FC = () => {
 
       {/* Modal Form for Adding New School */}
       <AnimatePresence>
-        {isFormVisible && (
-          <motion.div
-            className="fixed inset-0 bg-gray-500 bg-opacity-50 flex justify-center items-center z-50"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-          >
-            <motion.div
-              className="bg-white p-8 rounded-lg shadow-lg w-1/3"
-              initial={{ scale: 0.8 }}
-              animate={{ scale: 1 }}
-              exit={{ scale: 0.8 }}
-            >
-              <h2 className="text-2xl font-bold mb-4">Add New School</h2>
-              <form onSubmit={handleSubmit}>
-                <div className="mb-4">
-                  <label htmlFor="name" className="block text-gray-700">
-                    School Name
-                  </label>
-                  <input
-                    type="text"
-                    id="name"
-                    name="name"
-                    value={newSchool.name}
-                    onChange={handleFormChange}
-                    className="w-full p-3 mt-2 rounded-lg bg-gray-200"
-                    required
-                  />
-                </div>
-                <div className="mb-4">
-                  <label htmlFor="address" className="block text-gray-700">
-                    Address
-                  </label>
-                  <input
-                    type="text"
-                    id="address"
-                    name="address"
-                    value={newSchool.address}
-                    onChange={handleFormChange}
-                    className="w-full p-3 mt-2 rounded-lg bg-gray-200"
-                    required
-                  />
-                </div>
-                <div className="mb-4">
-                  <label htmlFor="adminContact" className="block text-gray-700">
-                    Admin Contact
-                  </label>
-                  <input
-                    type="email"
-                    id="adminContact"
-                    name="adminContact"
-                    value={newSchool.adminContact}
-                    onChange={handleFormChange}
-                    className="w-full p-3 mt-2 rounded-lg bg-gray-200"
-                    required
-                  />
-                </div>
-                <div className="mb-4">
-                  <label htmlFor="phone" className="block text-gray-700">
-                    Phone Number
-                  </label>
-                  <input
-                    type="tel"
-                    id="phone"
-                    name="phone"
-                    value={newSchool.phone}
-                    onChange={handleFormChange}
-                    className="w-full p-3 mt-2 rounded-lg bg-gray-200"
-                    required
-                  />
-                </div>
-
-                <button
-                  type="submit"
-                  className="w-full bg-blue-500 text-white py-2 rounded-lg mt-4"
-                >
-                  Submit
-                </button>
-              </form>
-              <button
-                onClick={handleCloseModal}
-                className="mt-4 bg-red-500 text-white px-4 py-2 rounded-lg"
-              >
-                Close
-              </button>
-            </motion.div>
-          </motion.div>
-        )}
+        {isFormVisible && <CreateSchool handleCloseModal={handleCloseModal} />}
       </AnimatePresence>
     </div>
   );
