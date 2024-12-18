@@ -28,4 +28,6 @@ export const getSchools = async () => {
     console.log("Response of schools: ", response);
     return response.data;
   } catch (error) {
+    console.log(error);
+  }
 };
