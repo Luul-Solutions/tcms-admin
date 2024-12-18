@@ -28,7 +28,4 @@ export const getSchools = async () => {
     console.log("Response of schools: ", response);
     return response.data;
   } catch (error) {
-    console.error("Error fetching schools:", error);
-    throw error;
-  }
 };

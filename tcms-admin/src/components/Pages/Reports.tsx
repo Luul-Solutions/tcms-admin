@@ -1,4 +1,6 @@
 import React, { useState, useEffect, useMemo } from "react";
+import jsPDF from "jspdf";
+import html2canvas from "html2canvas";
 import reportsData from "../../Data/reports.json";
 
 const ALLOWED_STATUSES = ["Pending", "Completed", "Archived"] as const;
@@ -34,6 +36,14 @@ const Reports: React.FC = () => {
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [reportsPerPage] = useState<number>(10);
 
+  // State for new report form
+  const [newReport, setNewReport] = useState({
+    name: "",
+    type: "",
+    status: "Pending" as "Pending" | "Completed" | "Archived",
+    date: "",
+  });
+
   useEffect(() => {
     try {
       const validatedReports = transformReportsData(reportsData);
@@ -41,45 +51,30 @@ const Reports: React.FC = () => {
     } catch (error) {
       console.error("Error transforming reports data:", error);
     }
-
-    // Example of a backend call (this is commented out)
-    /*
-    fetch('/api/reports')
-      .then(response => response.json())
-      .then(data => {
-        const validatedReports = transformReportsData(data);
-        setReports(validatedReports);
-      })
-      .catch(error => console.error("Error fetching reports:", error));
-    */
   }, []);
 
   const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const term = e.target.value.toLowerCase();
-    setSearchTerm(term);
+    setSearchTerm(e.target.value.toLowerCase());
   };
 
   const handleFilterStatusChange = (
     e: React.ChangeEvent<HTMLSelectElement>,
   ) => {
-    const status = e.target.value;
-    setFilterStatus(status);
+    setFilterStatus(e.target.value);
   };
 
-  const handleStatusChange = (
-    id: string,
-    currentStatus: "Pending" | "Completed" | "Archived",
-  ) => {
-    let nextStatus: "Pending" | "Completed" | "Archived";
+  const handleAddReport = () => {
+    const newId = (reports.length + 1).toString();
+    const reportToAdd = {
+      id: newId,
+      name: newReport.name,
+      type: newReport.type,
+      status: newReport.status,
+      date: newReport.date,
+    };
 
-    if (currentStatus === "Pending") nextStatus = "Completed";
-    else if (currentStatus === "Completed") nextStatus = "Archived";
-    else nextStatus = "Archived";
-
-    const updatedReports = reports.map((report) =>
-      report.id === id ? { ...report, status: nextStatus } : report,
-    );
-    setReports(updatedReports);
+    setReports([...reports, reportToAdd]);
+    setNewReport({ name: "", type: "", status: "Pending", date: "" });
   };
 
   const filteredReports = useMemo(() => {
@@ -113,31 +108,105 @@ const Reports: React.FC = () => {
 
   const totalPages = Math.ceil(filteredReports.length / reportsPerPage);
 
+  // Function to generate and download PDF
+  const generatePDF = () => {
+    const input = document.getElementById("report-list");
+    if (input) {
+      html2canvas(input).then((canvas) => {
+        const imgData = canvas.toDataURL("image/png");
+        const pdf = new jsPDF("p", "mm", "a4");
+        const imgWidth = 190;
+        const pageHeight = 297;
+        const imgHeight = (canvas.height * imgWidth) / canvas.width;
+
+        let heightLeft = imgHeight;
+        let position = 0;
+
+        pdf.addImage(imgData, "PNG", 10, position, imgWidth, imgHeight);
+        heightLeft -= pageHeight;
+
+        while (heightLeft > 0) {
+          position = heightLeft - imgHeight;
+          pdf.addPage();
+          pdf.addImage(imgData, "PNG", 10, position, imgWidth, imgHeight);
+          heightLeft -= pageHeight;
+        }
+
+        pdf.save("reports.pdf");
+      });
+    }
+  };
+
   return (
     <div className="p-6 bg-gray-100 min-h-screen">
-      <div className="mb-4">
-        <label htmlFor="search" className="block text-gray-700 mb-2">
-          Search Reports
-        </label>
+      {/* Add Report Form */}
+      <div className="p-6 bg-white rounded-lg shadow-md mb-6">
+        <h2 className="text-2xl font-semibold mb-4">Add New Report</h2>
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+          <input
+            type="text"
+            placeholder="Name"
+            value={newReport.name}
+            onChange={(e) =>
+              setNewReport({ ...newReport, name: e.target.value })
+            }
+            className="p-3 border rounded-lg"
+          />
+          <input
+            type="text"
+            placeholder="Type"
+            value={newReport.type}
+            onChange={(e) =>
+              setNewReport({ ...newReport, type: e.target.value })
+            }
+            className="p-3 border rounded-lg"
+          />
+          <input
+            type="date"
+            value={newReport.date}
+            onChange={(e) =>
+              setNewReport({ ...newReport, date: e.target.value })
+            }
+            className="p-3 border rounded-lg"
+          />
+          <select
+            value={newReport.status}
+            onChange={(e) =>
+              setNewReport({
+                ...newReport,
+                status: e.target.value as "Pending" | "Completed" | "Archived",
+              })
+            }
+            className="p-3 border rounded-lg"
+          >
+            {ALLOWED_STATUSES.map((status) => (
+              <option key={status} value={status}>
+                {status}
+              </option>
+            ))}
+          </select>
+        </div>
+        <button
+          onClick={handleAddReport}
+          className="mt-4 px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600"
+        >
+          Add Report
+        </button>
+      </div>
+
+      {/* Search and Filter */}
+      <div className="mb-4 flex gap-4">
         <input
-          id="search"
           type="text"
           placeholder="Search by name or type"
           value={searchTerm}
           onChange={handleSearch}
-          className="w-full p-3 rounded-lg bg-gray-200 focus:ring-2 focus:ring-blue-500 outline-none"
+          className="p-3 rounded-lg border w-full"
         />
-      </div>
-
-      <div className="mb-6">
-        <label htmlFor="filter-status" className="block text-gray-700 mb-2">
-          Filter by Status
-        </label>
         <select
-          id="filter-status"
           value={filterStatus}
           onChange={handleFilterStatusChange}
-          className="w-full p-3 rounded-lg bg-gray-200 focus:ring-2 focus:ring-blue-500 outline-none"
+          className="p-3 border rounded-lg"
         >
           {["All", ...ALLOWED_STATUSES].map((status) => (
             <option key={status} value={status}>
@@ -147,40 +216,33 @@ const Reports: React.FC = () => {
         </select>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {currentReports.map((report) => (
-          <div
-            key={report.id}
-            className="p-6 bg-white rounded-lg shadow-lg hover:shadow-xl transition-all"
-          >
-            <h2 className="text-lg font-bold text-gray-800">{report.name}</h2>
-            <p className="text-sm text-gray-600">Type: {report.type}</p>
-            <p
-              className={`text-sm font-medium ${
-                report.status === "Completed"
-                  ? "text-green-600"
-                  : report.status === "Pending"
-                    ? "text-yellow-600"
-                    : "text-gray-500"
-              }`}
-            >
-              Status: {report.status}
-            </p>
-            <p className="text-sm text-gray-500">Date: {report.date}</p>
+      {/* PDF Download Button */}
+      <div className="mb-4 text-right">
+        <button
+          onClick={generatePDF}
+          className="px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600"
+        >
+          Download PDF
+        </button>
+      </div>
 
-            {report.status !== "Archived" && (
-              <button
-                onClick={() => handleStatusChange(report.id, report.status)}
-                className="mt-4 px-4 py-2 bg-blue-500 text-white rounded-lg"
-              >
-                Mark as {report.status === "Pending" ? "Completed" : "Archived"}
-              </button>
-            )}
+      {/* Reports List */}
+      <div
+        id="report-list"
+        className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
+      >
+        {currentReports.map((report) => (
+          <div key={report.id} className="p-6 bg-white rounded-lg shadow-lg">
+            <h2 className="text-lg font-bold">{report.name}</h2>
+            <p>Type: {report.type}</p>
+            <p>Status: {report.status}</p>
+            <p>Date: {report.date}</p>
           </div>
         ))}
       </div>
 
-      <div className="mt-6 flex justify-center items-center">
+      {/* Pagination */}
+      <div className="mt-6 flex justify-center">
         <button
           onClick={() => handlePageChange(currentPage - 1)}
           disabled={currentPage === 1}
@@ -188,7 +250,9 @@ const Reports: React.FC = () => {
         >
           Previous
         </button>
-        <span className="px-4 py-2">{`Page ${currentPage} of ${totalPages}`}</span>
+        <span className="px-4 py-2 bg-gray-200">
+          Page {currentPage} of {totalPages}
+        </span>
         <button
           onClick={() => handlePageChange(currentPage + 1)}
           disabled={currentPage === totalPages}
