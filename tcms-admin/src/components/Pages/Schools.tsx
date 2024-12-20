@@ -2,16 +2,28 @@ import React, { useEffect, useState } from "react";
 import { CheckCircle, Ban, Trash2, Info, Settings } from "lucide-react";
 import { Link } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
-import { getSchools } from "../../services/auth";
+import { getSchools } from "../../services/getSchools";
 import { useQuery } from "react-query";
+<<<<<<< HEAD
 import axios, { AxiosError } from "axios";
 
 
+=======
+import Loading from "../Loading";
+import CreateSchool from "../school/CreateSchool";
+>>>>>>> school-stepper
 
 const Schools: React.FC = () => {
   const { data, isError, isLoading, error } = useQuery(
     "getSchools",
+<<<<<<< HEAD
     getSchools
+=======
+    getSchools,
+    {
+      staleTime: 0,
+    },
+>>>>>>> school-stepper
   );
 
   const [currentStep, setCurrentStep] = useState<number>(1);
@@ -109,9 +121,40 @@ function isAxiosError(error: unknown): error is AxiosError {
     );
   };
 
+<<<<<<< HEAD
   if (isLoading) return <h2>Loading...</h2>;
   if (isError) return <p>Error loading schools</p>;
 
+=======
+  const toggleSchoolStatus = (index: number) => {
+    setSchools((prevSchools) =>
+      prevSchools.map((school, i) =>
+        i === index
+          ? {
+              ...school,
+              status: school.status === "Active" ? "Inactive" : "Active",
+            }
+          : school,
+      ),
+    );
+    setFilteredSchools((prevSchools) =>
+      prevSchools.map((school, i) =>
+        i === index
+          ? {
+              ...school,
+              status: school.status === "Active" ? "Inactive" : "Active",
+            }
+          : school,
+      ),
+    );
+  };
+  if (isLoading) {
+    return <Loading />;
+  }
+  if (isError) {
+    return <p className="text-center text-red-400 text-xl">{String(error)}</p>;
+  }
+>>>>>>> school-stepper
   return (
     <div className="p-6 bg-gray-50 min-h-screen">
       {/* Quick Stats Section */}
@@ -182,6 +225,7 @@ function isAxiosError(error: unknown): error is AxiosError {
       </div>
       {/* Modal Form */}(
       <AnimatePresence>
+<<<<<<< HEAD
         {currentStep && (
           <motion.div
             className="fixed inset-0 bg-gray-500 bg-opacity-50 flex justify-center items-center"
@@ -533,6 +577,9 @@ function isAxiosError(error: unknown): error is AxiosError {
             </motion.div>
           </motion.div>
         )}
+=======
+        {isFormVisible && <CreateSchool handleCloseModal={handleCloseModal} />}
+>>>>>>> school-stepper
       </AnimatePresence>
     </div>
   );
