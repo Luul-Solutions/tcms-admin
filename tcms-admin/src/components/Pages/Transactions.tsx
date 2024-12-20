@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useQuery } from "react-query";
 import axios from "axios";
-import { getSchools } from "../../services/auth"; // Function to fetch schools
+import { getSchools } from "../../services/getSchools"; // Function to fetch schools
 
 interface School {
   id: string;
@@ -143,4 +143,3 @@ const Transactions: React.FC = () => {
 };
 
 export default Transactions;
- 
