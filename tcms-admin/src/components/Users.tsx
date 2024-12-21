@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 
@@ -41,21 +41,31 @@ const mockUsers: UserDetails[] = [
 const Users: React.FC = () => {
   const { userName } = useParams();
   const [searchTerm, setSearchTerm] = useState("");
-  const [users, setUsers] = useState<UserDetails[]>(mockUsers);
+  const [users, setUsers] = useState<UserDetails[]>(() => {
+    const savedUsers = localStorage.getItem("users");
+    return savedUsers ? JSON.parse(savedUsers) : mockUsers;
+  });
   const [selectedUsers, setSelectedUsers] = useState<string[]>([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isBulkActionModalOpen, setIsBulkActionModalOpen] = useState(false);
+  const [bulkActionType, setBulkActionType] = useState("");
   const [newUser, setNewUser] = useState({
     firstname: "",
-    fullname: "",
+    surname: "",
+    role: "",
     email: "",
     password: "",
     phoneNumber: "",
   });
 
+  useEffect(() => {
+    localStorage.setItem("users", JSON.stringify(users));
+  }, [users]);
+
   const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
     const term = e.target.value.toLowerCase();
     setSearchTerm(term);
-    const filteredUsers = mockUsers.filter(
+    const filteredUsers = users.filter(
       (user) =>
         user.name.toLowerCase().includes(term) ||
         user.email.toLowerCase().includes(term),
@@ -71,7 +81,8 @@ const Users: React.FC = () => {
     setIsModalOpen(false);
     setNewUser({
       firstname: "",
-      fullname: "",
+      surname: "",
+      role: "",
       email: "",
       password: "",
       phoneNumber: "",
@@ -84,8 +95,28 @@ const Users: React.FC = () => {
   };
 
   const handleCreateUser = () => {
-    alert(`User Created: ${JSON.stringify(newUser, null, 2)}`);
-    handleModalClose();
+    if (
+      !newUser.firstname ||
+      !newUser.surname ||
+      !newUser.role ||
+      !newUser.email
+    ) {
+      alert("Please fill out all required fields.");
+      return;
+    }
+
+    const newUserDetails: UserDetails = {
+      id: (users.length + 1).toString(), // Generate a new unique ID
+      name: `${newUser.firstname} ${newUser.surname}`,
+      role: newUser.role,
+      status: "Active", // Default status for new users
+      email: newUser.email,
+      school: "Unassigned", // Default school for new users
+    };
+
+    setUsers((prevUsers) => [...prevUsers, newUserDetails]); // Add the new user to the state
+    alert(`User Created: ${newUserDetails.name}`);
+    handleModalClose(); // Close the modal
   };
 
   const handleRoleChange = (userId: string, newRole: string) => {
@@ -96,24 +127,53 @@ const Users: React.FC = () => {
   };
 
   const handleBulkAction = (action: string) => {
-    if (selectedUsers.length === 0) {
-      alert("No users selected.");
-      return;
-    }
-    alert(`${action} action performed on users: ${selectedUsers.join(", ")}`);
-    setSelectedUsers([]);
+    setBulkActionType(action);
+    setIsBulkActionModalOpen(true);
   };
 
-  const handleCheckboxChange = (userId: string) => {
-    if (selectedUsers.includes(userId)) {
-      setSelectedUsers(selectedUsers.filter((id) => id !== userId));
-    } else {
+  const executeBulkAction = () => {
+    if (bulkActionType === "Activate") {
+      setUsers((prevUsers) =>
+        prevUsers.map((user) =>
+          selectedUsers.includes(user.id)
+            ? { ...user, status: "Active" }
+            : user,
+        ),
+      );
+    } else if (bulkActionType === "Deactivate") {
+      setUsers((prevUsers) =>
+        prevUsers.map((user) =>
+          selectedUsers.includes(user.id)
+            ? { ...user, status: "Inactive" }
+            : user,
+        ),
+      );
+    }
+    setIsBulkActionModalOpen(false);
+    setSelectedUsers([]);
+    alert(`${bulkActionType} action completed on selected accounts.`);
+  };
+
+  const handleUserSelectionFromDropdown = (
+    e: React.ChangeEvent<HTMLSelectElement>,
+  ) => {
+    const userId = e.target.value;
+    if (userId && !selectedUsers.includes(userId)) {
       setSelectedUsers([...selectedUsers, userId]);
     }
   };
 
+  function handleCheckboxChange(id: string): void {
+    throw new Error("Function not implemented.");
+  }
+
   return (
     <div className="p-6 bg-gray-100 min-h-screen">
+      {/* Header */}
+      <div className="mb-6">
+        <h1 className="text-3xl font-bold text-gray-800">User Management</h1>
+      </div>
+
       {/* Quick Stats Section */}
       <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 mb-6">
         {[
@@ -138,22 +198,23 @@ const Users: React.FC = () => {
         ))}
       </div>
 
-      {/* Search Bar */}
-      <input
-        type="text"
-        placeholder="Search users by name or email"
-        onChange={handleSearch}
-        value={searchTerm}
-        className="w-full p-3 mb-4 rounded-lg bg-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500"
-      />
-
-      {/* Add New User Shortcut */}
-      <button
-        onClick={handleAddUser}
-        className="mb-4 bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 transition"
-      >
-        ➕ Add New User
-      </button>
+      {/* Search Bar and Add User Button */}
+      <div className="flex items-center mb-4 space-x-6">
+        <input
+          type="text"
+          placeholder="Search users by name or email"
+          onChange={handleSearch}
+          value={searchTerm}
+          className="flex-grow p-3 rounded-lg bg-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500"
+        />
+        <button
+          onClick={handleAddUser}
+          className="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 transition"
+          style={{ marginLeft: "1.5cm" }}
+        >
+          ➕ Add New User
+        </button>
+      </div>
 
       {/* Bulk Actions Dropdown */}
       <div className="mb-4">
@@ -189,7 +250,7 @@ const Users: React.FC = () => {
             <p>
               Status:{" "}
               <span
-                className={`${
+                className={`$ {
                   user.status === "Active" ? "text-green-500" : "text-red-500"
                 }`}
               >
@@ -211,79 +272,60 @@ const Users: React.FC = () => {
           </div>
         ))}
       </div>
-      {isModalOpen && (
+
+      {isBulkActionModalOpen && (
         <AnimatePresence>
-          <div className="fixed inset-0 z-50 flex justify-end">
+          <div className="fixed inset-0 z-50 flex justify-center items-center bg-gray-900 bg-opacity-50">
             <motion.div
-              initial={{ x: "100%" }}
-              animate={{ x: 0 }}
-              exit={{ x: "100%" }}
-              transition={{ duration: 0.8 }} // Smooth transition (0.8 seconds)
-              className="bg-white p-6 shadow-lg w-1/3 h-full"
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.9 }}
+              className="bg-white p-6 rounded-lg shadow-lg w-1/3"
             >
-              <h2 className="text-xl font-bold mb-4">Add New User</h2>
+              <h2 className="text-xl font-bold mb-4">
+                {bulkActionType} Accounts
+              </h2>
               <div className="mb-4">
-                <label className="block mb-2 text-gray-700">First Name</label>
-                <input
-                  type="text"
-                  name="firstname"
-                  value={newUser.firstname}
-                  onChange={handleNewUserChange}
-                  className="w-full p-2 border rounded-lg"
-                />
-              </div>
-              <div className="mb-4">
-                <label className="block mb-2 text-gray-700">Full Name</label>
-                <input
-                  type="text"
-                  name="fullname"
-                  value={newUser.fullname}
-                  onChange={handleNewUserChange}
-                  className="w-full p-2 border rounded-lg"
-                />
-              </div>
-              <div className="mb-4">
-                <label className="block mb-2 text-gray-700">Email</label>
-                <input
-                  type="email"
-                  name="email"
-                  value={newUser.email}
-                  onChange={handleNewUserChange}
-                  className="w-full p-2 border rounded-lg"
-                />
-              </div>
-              <div className="mb-4">
-                <label className="block mb-2 text-gray-700">Password</label>
-                <input
-                  type="password"
-                  name="password"
-                  value={newUser.password}
-                  onChange={handleNewUserChange}
-                  className="w-full p-2 border rounded-lg"
-                />
-              </div>
-              <div className="mb-4">
-                <label className="block mb-2 text-gray-700">Phone Number</label>
-                <input
-                  type="text"
-                  name="phoneNumber"
-                  value={newUser.phoneNumber}
-                  onChange={handleNewUserChange}
-                  className="w-full p-2 border rounded-lg"
-                />
+                <h3 className="text-gray-700 font-semibold">Selected Users:</h3>
+                {selectedUsers.length > 0 ? (
+                  <ul className="list-disc pl-5">
+                    {selectedUsers.map((id) => {
+                      const user = users.find((u) => u.id === id);
+                      return user ? <li key={id}>{user.name}</li> : null;
+                    })}
+                  </ul>
+                ) : (
+                  <p className="text-gray-600">No users selected.</p>
+                )}
+                <div className="mt-4">
+                  <label className="block text-gray-700 mb-2">
+                    Select User:
+                  </label>
+                  <select
+                    className="w-full p-2 border rounded-lg"
+                    onChange={handleUserSelectionFromDropdown}
+                  >
+                    <option value="">-- Select a User --</option>
+                    {users.map((user) => (
+                      <option key={user.id} value={user.id}>
+                        {user.name}
+                      </option>
+                    ))}
+                  </select>
+                </div>
               </div>
               <div className="flex justify-end">
                 <button
-                  onClick={handleModalClose}
+                  onClick={() => setIsBulkActionModalOpen(false)}
                   className="px-4 py-2 bg-gray-300 text-gray-700 rounded-lg mr-2"
                 >
                   Cancel
                 </button>
                 <button
-                  onClick={handleCreateUser}
+                  onClick={executeBulkAction}
                   className="px-4 py-2 bg-blue-500 text-white rounded-lg"
                 >
-                  Create
+                  Confirm
                 </button>
               </div>
             </motion.div>
@@ -295,3 +337,6 @@ const Users: React.FC = () => {
 };
 
 export default Users;
+
+
+
