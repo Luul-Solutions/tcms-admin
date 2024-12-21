@@ -4,20 +4,90 @@
     "title": "System Update",
     "message": "System update scheduled for 12 AM tonight.",
     "status": "Info",
-    "date": "2023-11-10"
+    "date": "2023-11-10",
+    "isCritical": false
   },
   {
     "id": "2",
     "title": "New Report Available",
     "message": "The Monthly Sales Report is now available.",
     "status": "Alert",
-    "date": "2023-11-09"
+    "date": "2023-11-09",
+    "isCritical": false
+  },
+ 
+
+  {
+    "id": "4",
+    "title": "Failed Transaction",
+    "message": "Your payment could not be processed.",
+    "status": "Unread",
+    "date": "2024-12-19",
+    "isCritical": true
+  },
+
+  {
+    "id": "5",
+    "title": "Pending Request",
+    "message": "Approve new school",
+    "status": "Unread",
+    "date": "2024-12-14",
+    "isCritical": true
   },
   {
-    "id": "3",
-    "title": "Security Notice",
-    "message": "Unusual login activity detected.",
-    "status": "Warning",
-    "date": "2023-11-08"
+    "id": "6",
+    "title": "Event Reminder",
+    "message": "The webinar you registered for is starting soon.",
+    "status": "Unread",
+    "date": "2024-12-14",
+    "isCritical": false
+  },
+  {
+    "id": "7",
+    "title": "Account Update Required",
+    "message": "Your account information needs to be updated.",
+    "status": "Unread",
+    "date": "2024-12-13",
+    "isCritical": false
+  },
+  {
+    "id": "8",
+    "title": "Password Change Confirmation",
+    "message": "Your password has been successfully changed.",
+    "status": "Completed",
+    "date": "2024-12-12",
+    "isCritical": false
+  },
+  {
+    "id": "9",
+    "title": "Security Alert",
+    "message": "Suspicious activity detected on your account. Please check immediately.",
+    "status": "Unread",
+    "date": "2024-12-11",
+    "isCritical": true
+  },
+  {
+    "id": "10",
+    "title": "Discount Offer Ending Soon",
+    "message": "The current discount offer will expire in 2 days.",
+    "status": "Read",
+    "date": "2024-12-10",
+    "isCritical": false
+  },
+  {
+    "id": "11",
+    "title": "App Update Available",
+    "message": "An update is available for your app. Download it now to get the latest features.",
+    "status": "Unread",
+    "date": "2024-12-09",
+    "isCritical": false
+  },
+  {
+    "id": "12",
+    "title": "Maintenance Completed",
+    "message": "The scheduled maintenance has been completed successfully.",
+    "status": "Completed",
+    "date": "2024-12-08",
+    "isCritical": false
   }
 ]

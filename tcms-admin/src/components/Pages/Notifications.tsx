@@ -8,6 +8,7 @@ interface NotificationDetails {
   message: string;
   status: string;
   date: string;
+  isCritical: boolean;
 }
 
 const Notifications: React.FC = () => {
@@ -16,7 +17,7 @@ const Notifications: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState<string>("");
   const [statusFilter, setStatusFilter] = useState<string>("All");
   const [currentPage, setCurrentPage] = useState(1);
-  const [notificationsPerPage] = useState(10);
+  const [notificationsPerPage] = useState(8); // Show 8 notifications per page
   const navigate = useNavigate();
 
   const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -24,7 +25,7 @@ const Notifications: React.FC = () => {
   };
 
   const handleFilterStatusChange = (
-    e: React.ChangeEvent<HTMLSelectElement>,
+    e: React.ChangeEvent<HTMLSelectElement>
   ) => {
     setStatusFilter(e.target.value);
   };
@@ -36,8 +37,8 @@ const Notifications: React.FC = () => {
   const handleMarkAsCompleted = (id: string) => {
     setNotifications((prev) =>
       prev.map((notif) =>
-        notif.id === id ? { ...notif, status: "Completed" } : notif,
-      ),
+        notif.id === id ? { ...notif, status: "Completed" } : notif
+      )
     );
   };
 
@@ -49,17 +50,28 @@ const Notifications: React.FC = () => {
     .filter(
       (notif) =>
         notif.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        notif.message.toLowerCase().includes(searchTerm.toLowerCase()),
+        notif.message.toLowerCase().includes(searchTerm.toLowerCase())
     )
     .filter((notif) => statusFilter === "All" || notif.status === statusFilter);
 
-  const indexOfLastNotification = currentPage * notificationsPerPage;
-  const indexOfFirstNotification =
-    indexOfLastNotification - notificationsPerPage;
-  const currentNotifications = filteredNotifications.slice(
-    indexOfFirstNotification,
-    indexOfLastNotification,
+  const criticalNotifications = filteredNotifications.filter(
+    (notif) => notif.isCritical
   );
+
+  const nonCriticalNotifications = filteredNotifications.filter(
+    (notif) => !notif.isCritical
+  );
+
+  // Pagination logic for 8 notifications per page
+  const indexOfLastNotification = currentPage * notificationsPerPage;
+  const indexOfFirstNotification = indexOfLastNotification - notificationsPerPage;
+  const currentNotifications = nonCriticalNotifications.slice(
+    indexOfFirstNotification,
+    indexOfLastNotification
+  );
+
+  // Total pages calculation
+  const totalPages = Math.ceil(nonCriticalNotifications.length / notificationsPerPage);
 
   return (
     <div className="p-6 bg-gray-50 min-h-screen">
@@ -84,84 +96,79 @@ const Notifications: React.FC = () => {
         <option value="Completed">Completed</option>
       </select>
 
-      {currentNotifications.length > 0 ? (
-        currentNotifications.map((notif) => (
-          <div
-            key={notif.id}
-            onClick={() => handleNotificationClick(notif.id)}
-            className="p-4 bg-white rounded-lg shadow cursor-pointer mb-2 hover:bg-gray-200 transition"
-          >
-            <p className="font-medium text-gray-900">{notif.title}</p>
-            <p className="text-gray-700 mt-1">{notif.message}</p>
-            <p className="text-gray-500 mt-1 text-sm">{notif.date}</p>
-            <button
-              onClick={() => handleMarkAsCompleted(notif.id)}
-              className="bg-green-500 text-white p-2 rounded mt-2"
+      {criticalNotifications.length > 0 && (
+        <div className="mb-6">
+          <h3 className="text-red-600 font-bold text-xl mb-2">
+            Critical Notifications
+          </h3>
+          {criticalNotifications.map((notif) => (
+            <div
+              key={notif.id}
+              onClick={() => handleNotificationClick(notif.id)}
+              className="p-4 bg-red-100 rounded-lg shadow cursor-pointer mb-2 hover:bg-red-200 transition"
             >
-              Mark as Completed
-            </button>
-          </div>
-        ))
-      ) : (
-        <p>No notifications available.</p>
+              <p className="font-medium text-red-900">{notif.title}</p>
+              <p className="text-red-700 mt-1">{notif.message}</p>
+              <p className="text-red-500 mt-1 text-sm">{notif.date}</p>
+              <button
+                onClick={() => handleMarkAsCompleted(notif.id)}
+                className="bg-green-500 text-white p-2 rounded mt-2"
+              >
+                Mark as Completed
+              </button>
+            </div>
+          ))}
+        </div>
+      )}
+
+      {nonCriticalNotifications.length > 0 && (
+        <div className="mb-6">
+          <h3 className="text-gray-600 font-bold text-xl mb-2">Others</h3>
+          {currentNotifications.length > 0 ? (
+            currentNotifications.map((notif) => (
+              <div
+                key={notif.id}
+                onClick={() => handleNotificationClick(notif.id)}
+                className="p-4 bg-white rounded-lg shadow cursor-pointer mb-2 hover:bg-gray-200 transition"
+              >
+                <p className="font-medium text-gray-900">{notif.title}</p>
+                <p className="text-gray-700 mt-1">{notif.message}</p>
+                <p className="text-gray-500 mt-1 text-sm">{notif.date}</p>
+                <button
+                  onClick={() => handleMarkAsCompleted(notif.id)}
+                  className="bg-green-500 text-white p-2 rounded mt-2"
+                >
+                  Mark as Completed
+                </button>
+              </div>
+            ))
+          ) : (
+            <p>No notifications available.</p>
+          )}
+        </div>
       )}
 
       <div className="flex justify-between mt-4">
-        <button
-          disabled={currentPage === 1}
-          onClick={() => handlePaginationChange(currentPage - 1)}
-          className="p-2 bg-blue-500 text-white"
-        >
-          Previous
-        </button>
-        <button
-          disabled={
-            currentPage ===
-            Math.ceil(filteredNotifications.length / notificationsPerPage)
-          }
-          onClick={() => handlePaginationChange(currentPage + 1)}
-          className="p-2 bg-blue-500 text-white"
-        >
-          Next
-        </button>
+        {/* Conditionally render Previous button */}
+        {currentPage > 1 && (
+          <button
+            onClick={() => handlePaginationChange(currentPage - 1)}
+            className="p-2 bg-blue-500 text-white"
+          >
+            Previous
+          </button>
+        )}
+
+        {/* Conditionally render Next button */}
+        {currentPage < totalPages && (
+          <button
+            onClick={() => handlePaginationChange(currentPage + 1)}
+            className="p-2 bg-blue-500 text-white"
+          >
+            Next
+          </button>
+        )}
       </div>
-
-      {/* Backend integration is currently commented out */}
-      {/* 
-      useEffect(() => {
-        const fetchNotifications = async () => {
-          try {
-            const { data } = await axios.get('/api/notifications');
-            setNotifications(data);
-          } catch (err) {
-            console.error("Failed to fetch notifications", err);
-          }
-        };
-
-        fetchNotifications();
-      }, []);
-
-      const { data: serverNotifications, error: fetchError } = useQuery<
-        NotificationDetails[]
-      >(
-        ["notifications"],
-        async () => {
-          const { data } = await axios.get("/api/notifications");
-          return data;
-        },
-        {
-          enabled: false, // Disabling automatic fetching until needed
-        },
-      );
-
-      const handleRefreshNotifications = () => {
-        console.log("Refreshing Notifications from the server.");
-        // Uncomment when backend integration is ready
-        if (serverNotifications) {
-          setNotifications(serverNotifications);
-        }
-      };
-      */}
     </div>
   );
 };
